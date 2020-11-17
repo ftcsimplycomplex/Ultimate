@@ -78,9 +78,9 @@ public class TankDrive extends LinearOpMode {
         rightRear = hardwareMap.get(DcMotor.class, "RRD");
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
-        leftRear.setDirection(DcMotor.Direction.FORWARD);
+        leftRear.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setDirection(DcMotor.Direction.FORWARD);
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
