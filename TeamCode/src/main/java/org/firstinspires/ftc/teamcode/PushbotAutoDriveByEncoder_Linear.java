@@ -120,11 +120,11 @@ public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
                 leftFront.getCurrentPosition(),
                 rightFront.getCurrentPosition(),
                 leftRear.getCurrentPosition(),
-                rightRear.getCurrentPosition(),
-                telemetry.update(),
+                rightRear.getCurrentPosition());
+                telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
-        waitForStart(),
+        waitForStart();
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
