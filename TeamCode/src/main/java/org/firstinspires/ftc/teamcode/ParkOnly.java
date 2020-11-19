@@ -64,16 +64,16 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Pushbot: Auto Drive By Encoder", group="Linear Opmode")
-@Disabled
-public class AutoDriveByEncoder_Linear extends LinearOpMode {
+@Autonomous(name="Park Only", group="Linear Opmode")
+/*@Disabled*/
+public class ParkOnly extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
     private ElapsedTime     runtime = new ElapsedTime();
 
-    static final double     COUNTS_PER_MOTOR_REV    = 537.6 ;    // eg: TETRIX Motor Encoder
-    static final double     DRIVE_GEAR_REDUCTION    = 19.2*0.5 ;     // This is < 1.0 if geared UP
+    static final double     COUNTS_PER_MOTOR_REV    = 537.6 ;    // eg: Gobilda motor with a 19.2:1 gear box
+    static final double     DRIVE_GEAR_REDUCTION    = 2.0;     // This is < 1.0 if geared UP
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
@@ -107,8 +107,8 @@ public class AutoDriveByEncoder_Linear extends LinearOpMode {
 
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -132,9 +132,11 @@ public class AutoDriveByEncoder_Linear extends LinearOpMode {
 /*        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
         encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout*/
 
-        robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
-        robot.rightClaw.setPosition(0.0);
+/*        robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
+        robot.rightClaw.setPosition(0.0);*/
+/*
         sleep(1000);     // pause for servos to move
+*/
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -151,21 +153,23 @@ public class AutoDriveByEncoder_Linear extends LinearOpMode {
     public void encoderDrive(double speed,
                              double leftInches, double rightInches,
                              double timeoutS) {
-        int newLeftTarget;
-        int newRightTarget;
+        int newLeftRearTarget;
+        int newRightRearTarget;
+        int newLeftFrontTarget;
+        int newRightFrontTarget;
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newLeftTarget = leftFront.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = rightFront.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            newLeftTarget = leftRear.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = rightRear.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            leftFront.setTargetPosition(newLeftTarget);
-            rightFront.setTargetPosition(newRightTarget);
-            leftRear.setTargetPosition(newRightTarget);
-            rightRear.setTargetPosition(newRightTarget);
+            newLeftFrontTarget = leftFront.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newRightFrontTarget = rightFront.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            newLeftRearTarget = leftRear.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newRightRearTarget = rightRear.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            leftFront.setTargetPosition(newLeftFrontTarget);
+            rightFront.setTargetPosition(newRightFrontTarget);
+            leftRear.setTargetPosition(newLeftRearTarget);
+            rightRear.setTargetPosition(newRightRearTarget);
 
             // Turn On RUN_TO_POSITION
             leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -191,7 +195,7 @@ public class AutoDriveByEncoder_Linear extends LinearOpMode {
                     (leftFront.isBusy() && rightFront.isBusy() && leftRear.isBusy() && rightRear.isBusy())) {
 
                 // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
+                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftFrontTarget,  newRightFrontTarget, newLeftRearTarget);
                 telemetry.addData("Path2",  "Running at %7d :%7d",
                         leftFront.getCurrentPosition(),
                         rightFront.getCurrentPosition(),
