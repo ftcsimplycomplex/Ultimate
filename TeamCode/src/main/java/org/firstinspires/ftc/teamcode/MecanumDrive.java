@@ -57,25 +57,21 @@ import com.qualcomm.robotcore.util.Range;
 //@Disabled
 public class MecanumDrive extends LinearOpMode {
 
-    // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
+    // Declare motors
     private DcMotor leftFront = null;
     private DcMotor rightFront = null;
     private DcMotor leftRear = null;
     private DcMotor rightRear = null;
-
-    private Servo testServo;
-    private double LEFT_POS = 0.0;
-    private double RIGHT_POS = 1.0;
-    private double MID_POS = 0.5;
-
+    // Declare Buttons
     private boolean leftUpX;
     private boolean rightUpB;
     private boolean midUpA;
-
-
+    // Declare Wobble Goal Mechinism
+    public WobbleGoal wobbleGoal = new WobbleGoal();
+    // Declare Joystick variables
     private double translateY, translateX, rotate;
-
+    // Declare motor power variables
     private double lfPower, lrPower, rfPower, rrPower;
 
     @Override
@@ -97,7 +93,6 @@ public class MecanumDrive extends LinearOpMode {
         leftRear.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setDirection(DcMotor.Direction.FORWARD);
 
-        testServo = hardwareMap.get(Servo.class,"sv1");
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -105,7 +100,7 @@ public class MecanumDrive extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-
+            // Checking for button press
            if(!gamepad1.a){
                midUpA = true;
            }
@@ -119,26 +114,26 @@ public class MecanumDrive extends LinearOpMode {
             // gamepad button X
             if(gamepad1.x && leftUpX){
                 leftUpX = false;
-                testServo.setPosition(LEFT_POS);
+                wobbleGoal.parkArm();
             }
 
             // gamepad button A
             if(gamepad1.a && midUpA){
                 midUpA = false;
-                testServo.setPosition(MID_POS);
+                wobbleGoal.liftArm();
             }
 
             // gamepad button B
             if(gamepad1.b && rightUpB){
                 rightUpB = false;
-                testServo.setPosition(RIGHT_POS);
+                wobbleGoal.grabGoal();
             }
 
-
+             //defining joystick varibles
              translateY  = -gamepad1.left_stick_y ;
              rotate = gamepad1.right_stick_x ;
              translateX = gamepad1.left_stick_x;
-
+             //Calculating power needed in each motor
              lfPower = translateY + translateX + rotate;
              lrPower = translateY - translateX + rotate;
              rfPower = translateY - translateX - rotate;
