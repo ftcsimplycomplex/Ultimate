@@ -34,6 +34,11 @@ public class WobbleGoal {
         clawServo = hardwareMap.get(Servo.class, "CLAW");
         armServo = hardwareMap.get(Servo.class, "ARM");
     }
+
+    public WobbleGoal() {
+
+    }
+
     public void openClaw(){
         clawServo.setPosition(OPEN_CLAW_POS);
     }
