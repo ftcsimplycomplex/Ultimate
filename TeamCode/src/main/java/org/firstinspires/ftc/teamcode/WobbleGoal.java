@@ -13,32 +13,28 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class WobbleGoal {
-
+    //Declare Varibles For Contructing The Object
     private OpMode opMode;
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
-
+    //Declare Varibles for motors
     private Servo clawServo;
     private Servo armServo;
-
+    //Set Constants for All the Different Servo Postions
     private double OPEN_CLAW_POS = 0.0;
     private double CLOSED_CLAW_POS = 0.0;
     private double PARK_ARM_POS = 0.0;
     private double LIFT_ARM_POS = 0.0;
     private double GRAB_GOAL_POS = 0.0;
 
-    WobbleGoal(){
+    public WobbleGoal(){
         hardwareMap = opMode.hardwareMap;
         telemetry = opMode.telemetry;
-
+        //Find Servos
         clawServo = hardwareMap.get(Servo.class, "CLAW");
         armServo = hardwareMap.get(Servo.class, "ARM");
     }
-
-/*    public WobbleGoal() {
-
-    }*/
-
+    //Make Methods for all the different actions
     public void openClaw(){
         clawServo.setPosition(OPEN_CLAW_POS);
     }

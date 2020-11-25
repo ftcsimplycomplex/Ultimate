@@ -80,7 +80,7 @@ public class ParkOnly extends LinearOpMode {
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 0.5;
     static final double     TURN_SPEED              = 0.5;
-
+    // Declaring Motors
     private DcMotor leftFront = null;
     private DcMotor rightFront = null;
     private DcMotor leftRear = null;
@@ -94,9 +94,7 @@ public class ParkOnly extends LinearOpMode {
 
         /*
          * Initialize the drive system variables.
-         * The init() method of the hardware class does all the work here
          */
-        //robot.init(hardwareMap);
 
         leftFront  = hardwareMap.get(DcMotor.class, "LFD");
         rightFront = hardwareMap.get(DcMotor.class, "RFD");
@@ -104,9 +102,9 @@ public class ParkOnly extends LinearOpMode {
         rightRear = hardwareMap.get(DcMotor.class, "RRD");
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
+        telemetry.addData("Status", "Resetting Encoders");
         telemetry.update();
-
+        //Setting up the motors
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -135,20 +133,15 @@ public class ParkOnly extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  97,  97, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        wobbleGoal.grabGoal();
-        wobbleGoal.openClaw();
-        wobbleGoal.parkArm();
-        encoderDrive(DRIVE_SPEED,  -22,  -22, 5.0);
+        encoderDrive(DRIVE_SPEED,  97,  97, 5.0);  // S1: Forward to zone B
+        wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
+        sleep(100);     // pause for servos to move
+        wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
+        sleep(100);     // pause for servos to move
+        wobbleGoal.parkArm(); // S4: Raise arm
+        sleep(100);     // pause for servos to move
+        encoderDrive(DRIVE_SPEED,  -22,  -22, 5.0); // S5: Back up to Launch Line
 
-/*        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout*/
-
-/*        robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
-        robot.rightClaw.setPosition(0.0);*/
-/*
-        sleep(1000);     // pause for servos to move
-*/
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -196,11 +189,11 @@ public class ParkOnly extends LinearOpMode {
             leftRear.setPower(Math.abs(speed));
             rightRear.setPower(Math.abs(speed));
 
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // keep looping while we are still active, and there is time left, and all 4 motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when any of the motors hits
             // its target position, the motion will stop.  This is "safer" in the event that the robot will
             // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // However, if you require that ALL motors have finished their moves before the robot continues
             // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
