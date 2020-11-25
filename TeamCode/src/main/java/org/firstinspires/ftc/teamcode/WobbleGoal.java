@@ -27,15 +27,15 @@ public class WobbleGoal {
     private double LIFT_ARM_POS = 0.0;
     private double GRAB_GOAL_POS = 0.0;
 
-    public WobbleGoal(){
+    WobbleGoal(){
         hardwareMap = opMode.hardwareMap;
         telemetry = opMode.telemetry;
 
         clawServo = hardwareMap.get(Servo.class, "CLAW");
         armServo = hardwareMap.get(Servo.class, "ARM");
     }
-/*
-    public WobbleGoal() {
+
+/*    public WobbleGoal() {
 
     }*/
 
