@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -85,6 +86,7 @@ public class ParkOnly extends LinearOpMode {
     private DcMotor leftRear = null;
     private DcMotor rightRear = null;
 
+    public WobbleGoal wobbleGoal = new WobbleGoal();
     @Override
     public void runOpMode() {
 

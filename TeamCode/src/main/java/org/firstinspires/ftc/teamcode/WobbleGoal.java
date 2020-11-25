@@ -39,16 +39,14 @@ public class WobbleGoal {
     }
     public void closeClaw(){
         clawServo.setPosition(CLOSED_CLAW_POS);
-
     }
     public void parkArm(){
-        clawServo.setPosition(PARK_ARM_POS);
-
+        armServo.setPosition(PARK_ARM_POS);
     }
     public void liftArm(){
-
+        armServo.setPosition(LIFT_ARM_POS);
     }
     public void grabGoal(){
-
+        armServo.setPosition(GRAB_GOAL_POS);
     }
 }
