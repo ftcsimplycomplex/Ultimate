@@ -57,7 +57,7 @@ public class ServoTest extends LinearOpMode {
         telemetry.update();
 
         RightIntake = hardwareMap.get(Servo.class, "ARM");
-       // LeftIntake = hardwareMap.get(Servo.class, "lIntakeS");
+       LeftIntake = hardwareMap.get(Servo.class, "CLAW");
 
         telemetry.addLine("Servos mapped");
         telemetry.update();
@@ -118,7 +118,7 @@ public class ServoTest extends LinearOpMode {
                 // update telemetry
                 telemetry.update();
             }
-/*            if(gamepad1.b && bUp){
+           if(gamepad1.b && bUp){
                 // decreases the positional value of the left intake servo
                 bUp = false;
                 LeftPos -= 0.01;
@@ -129,7 +129,7 @@ public class ServoTest extends LinearOpMode {
 
                 // update telemetry
                 telemetry.update();
-            }*/
+            }
         }
     }
 }

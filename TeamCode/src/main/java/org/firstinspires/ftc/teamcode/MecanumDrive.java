@@ -69,7 +69,7 @@ public class MecanumDrive extends LinearOpMode {
     private boolean rightUpB;
     private boolean midUpA;
     // Declare Wobble Goal Mechinism
-    public WobbleGoal wobbleGoal = new WobbleGoal(this);
+    public WobbleGoal wobbleGoal;
     // Declare Joystick variables
     private double translateY, translateX, rotate;
     // Declare motor power variables
@@ -83,6 +83,8 @@ public class MecanumDrive extends LinearOpMode {
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
+        wobbleGoal = new WobbleGoal(this);
+
         leftFront  = hardwareMap.get(DcMotor.class, "LFD");
         rightFront = hardwareMap.get(DcMotor.class, "RFD");
         leftRear  = hardwareMap.get(DcMotor.class, "LRD");
@@ -127,7 +129,7 @@ public class MecanumDrive extends LinearOpMode {
             // gamepad button B
             if(gamepad2.b && rightUpB){
                 rightUpB = false;
-                wobbleGoal.grabGoal();
+                wobbleGoal.closeClaw();
             }
 
              //defining joystick varibles
