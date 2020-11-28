@@ -29,6 +29,8 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Path;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -65,9 +67,9 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Park Only", group="Linear Opmode")
+@Autonomous(name="Wobble B", group="Linear Opmode")
 /*@Disabled*/
-public class ParkOnly extends LinearOpMode {
+public class WobbleB extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
@@ -86,7 +88,7 @@ public class ParkOnly extends LinearOpMode {
     private DcMotor leftRear = null;
     private DcMotor rightRear = null;
 
-    public WobbleGoal wobbleGoal = new WobbleGoal();
+    public WobbleGoal wobbleGoal = new WobbleGoal(this);
     @Override
     public void runOpMode() {
 
@@ -135,11 +137,11 @@ public class ParkOnly extends LinearOpMode {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         encoderDrive(DRIVE_SPEED,  97,  97, 5.0);  // S1: Forward to zone B
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
-        sleep(100);     // pause for servos to move
+        sleep(1000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
-        sleep(100);     // pause for servos to move
+        sleep(1000);     // pause for servos to move
         wobbleGoal.parkArm(); // S4: Raise arm
-        sleep(100);     // pause for servos to move
+        sleep(1000);     // pause for servos to move
         encoderDrive(DRIVE_SPEED,  -22,  -22, 5.0); // S5: Back up to Launch Line
 
 

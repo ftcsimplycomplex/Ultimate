@@ -30,6 +30,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -68,7 +69,7 @@ public class MecanumDrive extends LinearOpMode {
     private boolean rightUpB;
     private boolean midUpA;
     // Declare Wobble Goal Mechinism
-    public WobbleGoal wobbleGoal = new WobbleGoal();
+    public WobbleGoal wobbleGoal = new WobbleGoal(this);
     // Declare Joystick variables
     private double translateY, translateX, rotate;
     // Declare motor power variables
@@ -101,30 +102,30 @@ public class MecanumDrive extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             // Checking for button press
-           if(!gamepad1.a){
+           if(!gamepad2.a){
                midUpA = true;
            }
-            if(!gamepad1.b){
+            if(!gamepad2.b){
                 rightUpB = true;
             }
-            if(!gamepad1.x){
+            if(!gamepad2.x){
                 leftUpX = true;
             }
 
             // gamepad button X
-            if(gamepad1.x && leftUpX){
+            if(gamepad2.x && leftUpX){
                 leftUpX = false;
                 wobbleGoal.parkArm();
             }
 
             // gamepad button A
-            if(gamepad1.a && midUpA){
+            if(gamepad2.a && midUpA){
                 midUpA = false;
                 wobbleGoal.liftArm();
             }
 
             // gamepad button B
-            if(gamepad1.b && rightUpB){
+            if(gamepad2.b && rightUpB){
                 rightUpB = false;
                 wobbleGoal.grabGoal();
             }
