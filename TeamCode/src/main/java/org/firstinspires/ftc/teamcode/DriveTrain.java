@@ -163,4 +163,57 @@ public class DriveTrain {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+    public void straffe(double horizontalInches, double verticalInches, double speed){
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        int leftRearTarget;
+        int rightRearTarget;
+        int leftFrontTarget;
+        int rightFrontTarget;
+
+        leftFrontTarget = leftFront.getCurrentPosition() + (int)(horizontalInches + verticalInches);
+        rightFrontTarget = rightFront.getCurrentPosition() +(int)(horizontalInches - verticalInches);
+        leftRearTarget = leftRear.getCurrentPosition() + (int)(horizontalInches - verticalInches);
+        rightRearTarget = rightRear.getCurrentPosition() + (int)(horizontalInches + verticalInches);
+
+        leftFront.setTargetPosition(leftFrontTarget);
+        rightFront.setTargetPosition(rightFrontTarget);
+        leftRear.setTargetPosition(leftRearTarget);
+        rightRear.setTargetPosition(rightRearTarget);
+
+        // Turn On RUN_TO_POSITION
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // reset the timeout time and start motion.
+        leftFront.setPower(Math.abs(speed));
+        rightFront.setPower(Math.abs(speed));
+        leftRear.setPower(Math.abs(speed));
+        rightRear.setPower(Math.abs(speed));
+
+        // keep looping while we are still active, and there is time left, and all 4 motors are running.
+        // Note: We use (isBusy() && isBusy()) in the loop test, which means that when any of the motors hits
+        // its target position, the motion will stop.  This is "safer" in the event that the robot will
+        // always end the motion as soon as possible.
+        // However, if you require that ALL motors have finished their moves before the robot continues
+        // onto the next step, use (isBusy() || isBusy()) in the loop test.
+        while (leftFront.isBusy() && rightFront.isBusy() && leftRear.isBusy() && rightRear.isBusy()) {
+
+        }
+
+        leftFront.setPower(0.0);
+        leftRear.setPower(0.0);
+        rightFront.setPower(0.0);
+        rightRear.setPower(0.0);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
 }
