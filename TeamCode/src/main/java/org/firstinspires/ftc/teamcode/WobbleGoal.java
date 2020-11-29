@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class WobbleGoal {
+    public boolean clawOpen;
+
     //Declare Varibles For Contructing The Object
     private OpMode opMode;
     private HardwareMap hardwareMap;
@@ -38,9 +40,11 @@ public class WobbleGoal {
     //Make Methods for all the different actions
     public void openClaw(){
         clawServo.setPosition(OPEN_CLAW_POS);
+        clawOpen = true;
     }
     public void closeClaw(){
         clawServo.setPosition(CLOSED_CLAW_POS);
+        clawOpen = false;
     }
     public void parkArm(){
         armServo.setPosition(PARK_ARM_POS);

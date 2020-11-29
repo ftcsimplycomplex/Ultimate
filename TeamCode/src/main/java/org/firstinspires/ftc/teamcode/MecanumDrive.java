@@ -68,6 +68,7 @@ public class MecanumDrive extends LinearOpMode {
     private boolean leftUpX;
     private boolean rightUpB;
     private boolean midUpA;
+    private boolean yButton;
     // Declare Wobble Goal Mechinism
     public WobbleGoal wobbleGoal;
     // Declare Joystick variables
@@ -113,6 +114,9 @@ public class MecanumDrive extends LinearOpMode {
             if(!gamepad2.x){
                 leftUpX = true;
             }
+            if(!gamepad2.y){
+                yButton = true;
+            }
 
             // gamepad button X
             if(gamepad2.x && leftUpX){
@@ -130,7 +134,17 @@ public class MecanumDrive extends LinearOpMode {
             // gamepad button B
             if(gamepad2.b && rightUpB){
                 rightUpB = false;
-                wobbleGoal.closeClaw();
+                wobbleGoal.grabGoal();
+            }
+            // gamepad button Y
+            if(gamepad2.y && yButton) {
+                yButton = false;
+                // toggles claw
+                if (wobbleGoal.clawOpen) {
+                    wobbleGoal.closeClaw();
+                } else {
+                    wobbleGoal.openClaw();
+                }
             }
 
              //defining joystick varibles
