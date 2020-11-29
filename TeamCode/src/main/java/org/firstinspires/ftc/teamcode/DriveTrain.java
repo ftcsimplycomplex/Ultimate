@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+// We made it a class so it was easier to do different motions Ex. driving, straffing, turning, braking
 
 public class DriveTrain {
     private OpMode opMode;
@@ -52,22 +53,28 @@ public class DriveTrain {
         rightRear.setDirection(DcMotor.Direction.FORWARD);
     }
     public void stop(){
+        // sets motor power to 0 to stop robot
         leftFront.setPower(0.0);
         leftRear.setPower(0.0);
         rightFront.setPower(0.0);
         rightRear.setPower(0.0);
     }
+
+
     public void tankDrive(double speed, double rightInches, double leftInches, double timeout){
+        // set motors to correct mode
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        // made target variables
         int leftRearTarget;
         int rightRearTarget;
         int leftFrontTarget;
         int rightFrontTarget;
 
+        // defined target variables
         leftFrontTarget = leftFront.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
         rightFrontTarget = rightFront.getCurrentPosition() +(int)(rightInches * COUNTS_PER_INCH);
         leftRearTarget = leftRear.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
@@ -99,12 +106,13 @@ public class DriveTrain {
         while (leftFront.isBusy() && rightFront.isBusy() && leftRear.isBusy() && rightRear.isBusy()) {
 
         }
-
+        // stops the robot
         leftFront.setPower(0.0);
         leftRear.setPower(0.0);
         rightFront.setPower(0.0);
         rightRear.setPower(0.0);
 
+        // resets the mode
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -112,16 +120,21 @@ public class DriveTrain {
 
     }
     public void rotate(int degrees, double speed){
+
+        // set correct modes for motors
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        // created targets
         int leftRearTarget;
         int rightRearTarget;
         int leftFrontTarget;
         int rightFrontTarget;
 
+        // defined target variables
+        // 53.41 is about the circumference of one rotation of our robot - 17/2 * pi - 17 inch is about the diameter of our robot
         leftFrontTarget = leftFront.getCurrentPosition() + (int)(53.41 * degrees * COUNTS_PER_INCH/ 360);
         rightFrontTarget = rightFront.getCurrentPosition() +(int)(-53.41 * degrees * COUNTS_PER_INCH/ 360);
         leftRearTarget = leftRear.getCurrentPosition() + (int)(53.41 * degrees * COUNTS_PER_INCH/ 360);
@@ -154,6 +167,7 @@ public class DriveTrain {
 
         }
 
+        // robot stopped
         leftFront.setPower(0.0);
         leftRear.setPower(0.0);
         rightFront.setPower(0.0);
@@ -165,16 +179,21 @@ public class DriveTrain {
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
     public void straffe(double horizontalInches, double verticalInches, double speed){
+
+        // set correct modes for motors
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        // Created target variables
         int leftRearTarget;
         int rightRearTarget;
         int leftFrontTarget;
         int rightFrontTarget;
 
+        // defined target variables
+        // had diagonals go the same direction - 2 positive, 2 negative
         leftFrontTarget = leftFront.getCurrentPosition() + (int)(horizontalInches + verticalInches);
         rightFrontTarget = rightFront.getCurrentPosition() +(int)(horizontalInches - verticalInches);
         leftRearTarget = leftRear.getCurrentPosition() + (int)(horizontalInches - verticalInches);
@@ -207,11 +226,13 @@ public class DriveTrain {
 
         }
 
+        // robot stops
         leftFront.setPower(0.0);
         leftRear.setPower(0.0);
         rightFront.setPower(0.0);
         rightRear.setPower(0.0);
 
+        // reset mode
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

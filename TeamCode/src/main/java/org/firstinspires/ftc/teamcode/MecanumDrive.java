@@ -124,6 +124,7 @@ public class MecanumDrive extends LinearOpMode {
             if(gamepad2.a && midUpA){
                 midUpA = false;
                 wobbleGoal.liftArm();
+                //Changes servo to liftArm position
             }
 
             // gamepad button B

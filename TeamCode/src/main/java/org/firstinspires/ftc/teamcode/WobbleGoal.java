@@ -22,8 +22,8 @@ public class WobbleGoal {
     private Servo clawServo;
     private Servo armServo;
     //Set Constants for All the Different Servo Postions
-    private double OPEN_CLAW_POS = 0.4;
-    private double CLOSED_CLAW_POS = 0.7;
+    private double OPEN_CLAW_POS = 0.4;     //Reference engineering notebook for numbers 11/28/2020
+    private double CLOSED_CLAW_POS = 0.7;   //Reference engineering notebook for numbers 11/28/2020
     private double PARK_ARM_POS = 0.205;    //Reference engineering notebook for numbers 11/25/2020
     private double LIFT_ARM_POS = 0.08;     //Reference engineering notebook for numbers 11/25/2020
     private double GRAB_GOAL_POS = 0.03;    //Reference engineering notebook for numbers 11/25/2020
