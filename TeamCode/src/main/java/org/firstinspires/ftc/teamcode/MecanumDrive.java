@@ -97,7 +97,9 @@ public class MecanumDrive extends LinearOpMode {
         leftRear.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setDirection(DcMotor.Direction.FORWARD);
 
-
+        //Start Positions for Servos
+        wobbleGoal.parkArm();
+        wobbleGoal.closeClaw();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
@@ -118,25 +120,25 @@ public class MecanumDrive extends LinearOpMode {
                 yButton = true;
             }
 
-            // gamepad button X
+            // gamepad button X - Park Arm
             if(gamepad2.x && leftUpX){
                 leftUpX = false;
                 wobbleGoal.parkArm();
             }
 
-            // gamepad button A
+            // gamepad button A - Lift Arm
             if(gamepad2.a && midUpA){
                 midUpA = false;
                 wobbleGoal.liftArm();
                 //Changes servo to liftArm position
             }
 
-            // gamepad button B
+            // gamepad button B - Grab Goal Position
             if(gamepad2.b && rightUpB){
                 rightUpB = false;
                 wobbleGoal.grabGoal();
             }
-            // gamepad button Y
+            // gamepad button Y - Toggles Claw
             if(gamepad2.y && yButton) {
                 yButton = false;
                 // toggles claw

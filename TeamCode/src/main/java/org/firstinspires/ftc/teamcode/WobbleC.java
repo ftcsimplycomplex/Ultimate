@@ -63,7 +63,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Wobble A", group="Linear Opmode")
+@Autonomous(name="Wobble C", group="Linear Opmode")
 /*@Disabled*/
 public class WobbleC extends LinearOpMode {
 
@@ -125,104 +125,28 @@ public class WobbleC extends LinearOpMode {
                 rightFront.getCurrentPosition(),
                 leftRear.getCurrentPosition(),
                 rightRear.getCurrentPosition());
-                telemetry.update();
-
+        telemetry.update();
+        //Set start position when init is pressed
+        wobbleGoal.parkArm();
+        wobbleGoal.closeClaw();
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  121.0,  121.0, 5.0);  // S1: Forward to zone C
-        driveTrain.straffe(28.0, 0.0, 0.5);
+        driveTrain.tankDrive(DRIVE_SPEED,  121.0,  121.0, 5.0);  // S1: Forward to zone C
+        driveTrain.straffe(28.0, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
-        sleep(1000);     // pause for servos to move
+        sleep(6000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
         sleep(1000);     // pause for servos to move
         wobbleGoal.parkArm(); // S4: Raise arm
-        sleep(1000);     // pause for servos to move
-        encoderDrive(DRIVE_SPEED,  -49.0,  -49.0, 5.0); // S5: Back up to Launch Line
+        //sleep(1000);     // pause for servos to move
+        driveTrain.tankDrive(DRIVE_SPEED,  -49.0,  -49.0, 5.0); // S5: Back up to Launch Line
 
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
-    }
-
-    /*
-     *  Method to perform a relative move, based on encoder counts.
-     *  Encoders are not reset as the move is based on the current position.
-     *  Move will stop if any of three conditions occur:
-     *  1) Move gets to the desired position
-     *  2) Move runs out of time
-     *  3) Driver stops the opmode running.
-     */
-    public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
-                             double timeoutS) {
-        int newLeftRearTarget;
-        int newRightRearTarget;
-        int newLeftFrontTarget;
-        int newRightFrontTarget;
-
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            newLeftFrontTarget = leftFront.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightFrontTarget = rightFront.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            newLeftRearTarget = leftRear.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightRearTarget = rightRear.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            leftFront.setTargetPosition(newLeftFrontTarget);
-            rightFront.setTargetPosition(newRightFrontTarget);
-            leftRear.setTargetPosition(newLeftRearTarget);
-            rightRear.setTargetPosition(newRightRearTarget);
-
-            // Turn On RUN_TO_POSITION
-            leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-            leftFront.setPower(Math.abs(speed));
-            rightFront.setPower(Math.abs(speed));
-            leftRear.setPower(Math.abs(speed));
-            rightRear.setPower(Math.abs(speed));
-
-            // keep looping while we are still active, and there is time left, and all 4 motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when any of the motors hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that ALL motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (leftFront.isBusy() && rightFront.isBusy() && leftRear.isBusy() && rightRear.isBusy())) {
-
-                // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftFrontTarget,  newRightFrontTarget, newLeftRearTarget);
-                telemetry.addData("Path2",  "Running at %7d :%7d",
-                        leftFront.getCurrentPosition(),
-                        rightFront.getCurrentPosition(),
-                        leftRear.getCurrentPosition(),
-                        rightRear.getCurrentPosition(),
-                        telemetry.update());
-            }
-
-            // Stop all motion;
-            leftFront.setPower(0);
-            rightFront.setPower(0);
-            leftRear.setPower(0);
-            rightRear.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            //  sleep(250);   // optional pause after each move
-        }
     }
 }
 

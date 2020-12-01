@@ -16,7 +16,26 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 // We made it a class so it was easier to do different motions Ex. driving, straffing, turning, braking
+/*
+ Instructions:
+ tankDrive(leftInches, rightInches, speed)
+    leftInches is for both the left front and left back motor
+    rightInches is for both the right front and right back motor
+    speed has to be a positive double from 0.0 to 1.0
 
+ rotate(degrees, speed)
+    A positive turn is clockwise while negative is counter clockwise
+    degrees can be any integer, positive or negative
+    speed has to be a positive double from 0.0 to 1.0
+
+ straffe(horizantalInches, speed)
+    straffe only goes left or right
+    speed has to be a positive double from 0.0 to 1.0
+  stop()
+    self explanatory
+
+   ALL of these other then stop() work using encoders
+*/
 public class DriveTrain {
     private OpMode opMode;
     private HardwareMap hardwareMap;
@@ -92,10 +111,10 @@ public class DriveTrain {
         rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // reset the timeout time and start motion.
-        leftFront.setPower(Math.abs(speed));
-        rightFront.setPower(Math.abs(speed));
-        leftRear.setPower(Math.abs(speed));
-        rightRear.setPower(Math.abs(speed));
+        leftFront.setPower(Range.clip(Math.abs(speed),-1,1));
+        rightFront.setPower(Range.clip(Math.abs(speed),-1,1));
+        leftRear.setPower(Range.clip(Math.abs(speed),-1,1));
+        rightRear.setPower(Range.clip(Math.abs(speed),-1,1));
 
         // keep looping while we are still active, and there is time left, and all 4 motors are running.
         // Note: We use (isBusy() && isBusy()) in the loop test, which means that when any of the motors hits
@@ -152,10 +171,10 @@ public class DriveTrain {
         rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // reset the timeout time and start motion.
-        leftFront.setPower(Math.abs(speed));
-        rightFront.setPower(Math.abs(speed));
-        leftRear.setPower(Math.abs(speed));
-        rightRear.setPower(Math.abs(speed));
+        leftFront.setPower(Range.clip(Math.abs(speed),-1,1));
+        rightFront.setPower(Range.clip(Math.abs(speed),-1,1));
+        leftRear.setPower(Range.clip(Math.abs(speed),-1,1));
+        rightRear.setPower(Range.clip(Math.abs(speed),-1,1));
 
         // keep looping while we are still active, and there is time left, and all 4 motors are running.
         // Note: We use (isBusy() && isBusy()) in the loop test, which means that when any of the motors hits
@@ -178,7 +197,8 @@ public class DriveTrain {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
-    public void straffe(double horizontalInches, double verticalInches, double speed){
+    //Input a negative horizontalInches to go left, positive to go right
+    public void straffe(double horizontalInches, double speed){
 
         // set correct modes for motors
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -194,10 +214,10 @@ public class DriveTrain {
 
         // defined target variables
         // had diagonals go the same direction - 2 positive, 2 negative
-        leftFrontTarget = leftFront.getCurrentPosition() + (int)(horizontalInches + verticalInches);
-        rightFrontTarget = rightFront.getCurrentPosition() +(int)(horizontalInches - verticalInches);
-        leftRearTarget = leftRear.getCurrentPosition() + (int)(horizontalInches - verticalInches);
-        rightRearTarget = rightRear.getCurrentPosition() + (int)(horizontalInches + verticalInches);
+        leftFrontTarget = leftFront.getCurrentPosition() + (int)(horizontalInches);
+        rightFrontTarget = rightFront.getCurrentPosition() +(int)(-horizontalInches);
+        leftRearTarget = leftRear.getCurrentPosition() + (int)(-horizontalInches);
+        rightRearTarget = rightRear.getCurrentPosition() + (int)(horizontalInches);
 
         leftFront.setTargetPosition(leftFrontTarget);
         rightFront.setTargetPosition(rightFrontTarget);
@@ -211,10 +231,10 @@ public class DriveTrain {
         rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // reset the timeout time and start motion.
-        leftFront.setPower(Math.abs(speed));
-        rightFront.setPower(Math.abs(speed));
-        leftRear.setPower(Math.abs(speed));
-        rightRear.setPower(Math.abs(speed));
+        leftFront.setPower(Range.clip(Math.abs(speed),-1,1));
+        rightFront.setPower(Range.clip(Math.abs(speed),-1,1));
+        leftRear.setPower(Range.clip(Math.abs(speed),-1,1));
+        rightRear.setPower(Range.clip(Math.abs(speed),-1,1));
 
         // keep looping while we are still active, and there is time left, and all 4 motors are running.
         // Note: We use (isBusy() && isBusy()) in the loop test, which means that when any of the motors hits
