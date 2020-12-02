@@ -48,7 +48,7 @@ public class ServoTest extends LinearOpMode {
     private boolean xUp, yUp, aUp, bUp;
 
     private double RightPos = 0.30;
-    private double LeftPos = 0.70;
+    private double LeftPos = 0.79;
 
     @Override
     public void runOpMode() {
