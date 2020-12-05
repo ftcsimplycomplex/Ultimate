@@ -98,7 +98,7 @@ public class WobbleA extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        driveTrain.tankDrive(DRIVE_SPEED,  73.75,  73.75, 5.0);  // S1: Forward to zone A
+        driveTrain.tankDrive(DRIVE_SPEED,  46.75,  46.75, 5.0);  // S1: Forward to zone A
         driveTrain.straffe(28.0, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(5000);     // pause for servos to move

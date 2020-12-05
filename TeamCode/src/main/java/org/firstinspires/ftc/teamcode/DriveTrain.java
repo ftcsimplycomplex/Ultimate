@@ -154,10 +154,10 @@ public class DriveTrain {
 
         // defined target variables
         // 53.41 is about the circumference of one rotation of our robot - 17/2 * pi - 17 inch is about the diameter of our robot
-        leftFrontTarget = leftFront.getCurrentPosition() + (int)(53.41 * degrees * COUNTS_PER_INCH/ 360);
-        rightFrontTarget = rightFront.getCurrentPosition() +(int)(-53.41 * degrees * COUNTS_PER_INCH/ 360);
-        leftRearTarget = leftRear.getCurrentPosition() + (int)(53.41 * degrees * COUNTS_PER_INCH/ 360);
-        rightRearTarget = rightRear.getCurrentPosition() + (int)(-53.41 * degrees * COUNTS_PER_INCH/ 360);
+        leftFrontTarget = leftFront.getCurrentPosition() + (int)(62.24 * degrees * 1.45 * COUNTS_PER_INCH/ 360);
+        rightFrontTarget = rightFront.getCurrentPosition() +(int)(-62.24 * degrees *1.45 * COUNTS_PER_INCH/ 360);
+        leftRearTarget = leftRear.getCurrentPosition() + (int)(62.24 * degrees * 1.45* COUNTS_PER_INCH/ 360);
+        rightRearTarget = rightRear.getCurrentPosition() + (int)(-62.24 * degrees * 1.45 * COUNTS_PER_INCH/ 360);
 
         leftFront.setTargetPosition(leftFrontTarget);
         rightFront.setTargetPosition(rightFrontTarget);
@@ -214,10 +214,10 @@ public class DriveTrain {
 
         // defined target variables
         // had diagonals go the same direction - 2 positive, 2 negative
-        leftFrontTarget = leftFront.getCurrentPosition() + (int)(horizontalInches);
-        rightFrontTarget = rightFront.getCurrentPosition() +(int)(-horizontalInches);
-        leftRearTarget = leftRear.getCurrentPosition() + (int)(-horizontalInches);
-        rightRearTarget = rightRear.getCurrentPosition() + (int)(horizontalInches);
+        leftFrontTarget = leftFront.getCurrentPosition() + (int)(horizontalInches*COUNTS_PER_INCH * 1.05);
+        rightFrontTarget = rightFront.getCurrentPosition() +(int)(-horizontalInches*COUNTS_PER_INCH * 1.05);
+        leftRearTarget = leftRear.getCurrentPosition() + (int)(-horizontalInches*COUNTS_PER_INCH * 1.05);
+        rightRearTarget = rightRear.getCurrentPosition() + (int)(horizontalInches*COUNTS_PER_INCH * 1.05);
 
         leftFront.setTargetPosition(leftFrontTarget);
         rightFront.setTargetPosition(rightFrontTarget);

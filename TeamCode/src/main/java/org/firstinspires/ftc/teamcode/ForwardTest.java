@@ -31,7 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
@@ -63,9 +62,9 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Wobble C", group="Linear Opmode")
+@Autonomous(name="ForwardTest", group="Linear Opmode")
 /*@Disabled*/
-public class WobbleC extends LinearOpMode {
+public class ForwardTest extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
@@ -80,34 +79,18 @@ public class WobbleC extends LinearOpMode {
     static final double     TURN_SPEED              = 0.5;
 
 
-    public WobbleGoal wobbleGoal;
+
+
     public DriveTrain driveTrain;
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        wobbleGoal = new WobbleGoal(this);
-        driveTrain = new DriveTrain(this);
+        driveTrain = new DriveTrain (this);
 
-
-        //Set start position when init is pressed
-        wobbleGoal.parkArm();
-        wobbleGoal.closeClaw();
-        // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        // Step through each leg of the path,
-        // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        driveTrain.tankDrive(DRIVE_SPEED,  97.75,  97.75, 5.0);  // S1: Forward to zone C
-        driveTrain.straffe(28.0, 0.5);
-        wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
-        sleep(5000);     // pause for servos to move
-        wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
-        sleep(1000);     // pause for servos to move
-        wobbleGoal.parkArm(); // S4: Raise arm
-        sleep(3000);     // pause for servos to move
-        driveTrain.tankDrive(DRIVE_SPEED,  -49.0,  -49.0, 5.0); // S5: Back up to Launch Line
-
+        driveTrain.tankDrive(0.5, 72.0,72.0,10.0);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
