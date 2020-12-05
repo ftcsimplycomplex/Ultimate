@@ -78,54 +78,18 @@ public class WobbleA extends LinearOpMode {
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 0.5;
     static final double     TURN_SPEED              = 0.5;
-    // Declaring Motors
-    private DcMotor leftFront = null;
-    private DcMotor rightFront = null;
-    private DcMotor leftRear = null;
-    private DcMotor rightRear = null;
 
-    public WobbleGoal wobbleGoal = new WobbleGoal(this);
-    public DriveTrain driveTrain = new DriveTrain (this);
+
+    public WobbleGoal wobbleGoal;
+    public DriveTrain driveTrain;
     @Override
     public void runOpMode() {
-
-
-
-        /*
-         * Initialize the drive system variables.
-         */
-
-        leftFront  = hardwareMap.get(DcMotor.class, "LFD");
-        rightFront = hardwareMap.get(DcMotor.class, "RFD");
-        leftRear  = hardwareMap.get(DcMotor.class, "LRD");
-        rightRear = hardwareMap.get(DcMotor.class, "RRD");
-
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");
+        telemetry.addData("Status", "Initialized");
         telemetry.update();
-        //Setting up the motors
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        wobbleGoal = new WobbleGoal(this);
+        driveTrain = new DriveTrain (this);
 
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.FORWARD);
-        leftRear.setDirection(DcMotor.Direction.REVERSE);
-        rightRear.setDirection(DcMotor.Direction.FORWARD);
 
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at %7d :%7d",
-                leftFront.getCurrentPosition(),
-                rightFront.getCurrentPosition(),
-                leftRear.getCurrentPosition(),
-                rightRear.getCurrentPosition());
-        telemetry.update();
         //Set start position when init is pressed
         wobbleGoal.parkArm();
         wobbleGoal.closeClaw();
@@ -137,11 +101,11 @@ public class WobbleA extends LinearOpMode {
         driveTrain.tankDrive(DRIVE_SPEED,  73.75,  73.75, 5.0);  // S1: Forward to zone A
         driveTrain.straffe(28.0, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
-        sleep(6000);     // pause for servos to move
+        sleep(5000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
         sleep(1000);     // pause for servos to move
         wobbleGoal.parkArm(); // S4: Raise arm
-        //sleep(1000);     // pause for servos to move
+        sleep(3000);     // pause for servos to move
         driveTrain.tankDrive(DRIVE_SPEED,  -2.0,  -2.0, 5.0); // S5: Back up to Launch Line
 
 
