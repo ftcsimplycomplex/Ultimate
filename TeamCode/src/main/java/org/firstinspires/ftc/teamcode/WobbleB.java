@@ -80,7 +80,7 @@ public class WobbleB extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.5;
+    static final double     DRIVE_SPEED             = 0.75;
     static final double     TURN_SPEED              = 0.5;
 
 
@@ -102,14 +102,14 @@ public class WobbleB extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        driveTrain.tankDrive(DRIVE_SPEED,70.75,70.75, 5);  // S1: Forward to zone B
+        driveTrain.tankDrive(DRIVE_SPEED,82.75,82.75, 5);  // S1: Forward to zone B
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
-        sleep(5000);     // pause for servos to move
+        sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
         sleep(1000);     // pause for servos to move
         wobbleGoal.parkArm(); // S4: Raise arm
         sleep(3000);     // pause for servos to move
-        driveTrain.tankDrive(DRIVE_SPEED,  -22,  -22, 5.0); // S5: Back up to Launch Line
+        driveTrain.tankDrive(DRIVE_SPEED,  -9,  -9, 5.0); // S5: Back up to Launch Line
 
 
         telemetry.addData("Path", "Complete");
