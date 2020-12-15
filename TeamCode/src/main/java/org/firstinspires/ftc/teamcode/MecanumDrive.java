@@ -69,6 +69,7 @@ public class MecanumDrive extends LinearOpMode {
     private boolean rightUpB;
     private boolean midUpA;
     private boolean yButton;
+    private boolean lBumperUp;
     // Declare Wobble Goal Mechinism
     public WobbleGoal wobbleGoal;
     // Declare Joystick variables
@@ -100,6 +101,10 @@ public class MecanumDrive extends LinearOpMode {
         //Start Positions for Servos
         wobbleGoal.parkArm();
         wobbleGoal.closeClaw();
+
+        //start position for ring drop arm
+        wobbleGoal.raiseRings();
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
@@ -119,6 +124,10 @@ public class MecanumDrive extends LinearOpMode {
             if(!gamepad2.y){
                 yButton = true;
             }
+            if(!gamepad2.left_bumper){
+                lBumperUp = true;
+            }
+
 
             // gamepad button X - Park Arm
             if(gamepad2.x && leftUpX){
@@ -146,6 +155,15 @@ public class MecanumDrive extends LinearOpMode {
                     wobbleGoal.closeClaw();
                 } else {
                     wobbleGoal.openClaw();
+                }
+            }
+            if(gamepad2.left_bumper && lBumperUp) {
+                lBumperUp = false;
+                // toggles ring dropper
+                if (wobbleGoal.arm2Up) {
+                    wobbleGoal.dropRings();
+                } else {
+                    wobbleGoal.raiseRings();
                 }
             }
 
