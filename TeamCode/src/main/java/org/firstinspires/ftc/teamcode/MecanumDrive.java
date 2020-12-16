@@ -167,15 +167,23 @@ public class MecanumDrive extends LinearOpMode {
                 }
             }
 
-             //defining joystick varibles
+             //defining joystick variables
              translateY  = -gamepad1.left_stick_y ;
              rotate = gamepad1.right_stick_x ;
              translateX = gamepad1.left_stick_x;
              //Calculating power needed in each motor
-             lfPower = translateY + translateX + rotate;
-             lrPower = translateY - translateX + rotate;
-             rfPower = translateY - translateX - rotate;
-             rrPower = translateY + translateX - rotate;
+            //turtleMode - 50% of normal power - if Right bumper is pressed (not toggle) turtleMode is on, if not, normal mode
+            if (gamepad1.right_bumper) {
+                lfPower = (translateY + translateX + rotate)/2;
+                lrPower = (translateY - translateX + rotate)/2;
+                rfPower = (translateY - translateX - rotate)/2;
+                rrPower = (translateY + translateX - rotate)/2;
+            } else {
+                lfPower = translateY + translateX + rotate;
+                lrPower = translateY - translateX + rotate;
+                rfPower = translateY - translateX - rotate;
+                rrPower = translateY + translateX - rotate;
+            }
 
             // Send calculated power to wheels
             leftFront.setPower(Range.clip(lfPower, -1.0, +1.0));
