@@ -81,6 +81,9 @@ public class AutonWobbleAll extends LinearOpMode {
 
     public WobbleGoal wobbleGoal;
     public DriveTrain driveTrain;
+
+    public String ringPosition;
+    public OpenCV detector;
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -93,6 +96,12 @@ public class AutonWobbleAll extends LinearOpMode {
         wobbleGoal.parkArm();
         wobbleGoal.closeClaw();
         wobbleGoal.raiseRings();
+
+        detector = new OpenCV(hardwareMap);
+        detector.init(detector);
+        while(!opModeIsActive()){
+            this.ringPosition = detector.getPosition();
+        }
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
