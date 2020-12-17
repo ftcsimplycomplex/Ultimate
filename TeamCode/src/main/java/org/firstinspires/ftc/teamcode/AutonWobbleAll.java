@@ -115,7 +115,7 @@ public class AutonWobbleAll extends LinearOpMode {
         driveTrain.tankDrive(DRIVE_SPEED,  -64,  -64, 7.0);  // S1: Forward to zone A
         driveTrain.straffe(31.0, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
-        sleep(1200);     // pause for servos to move
+        sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
         sleep(1200); //pause for servos to move
         driveTrain.straffe(-2.0,0.2); //S4: Strafe to the left 2 inches
@@ -129,7 +129,7 @@ public class AutonWobbleAll extends LinearOpMode {
         driveTrain.tankDrive(DRIVE_SPEED,-40,-40, 7);  // S1: Forward to zone B
         driveTrain.straffe(5, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
-        sleep(1200);     // pause for servos to move
+        sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
         sleep(1200); //pause for servos to move
         driveTrain.straffe(-2.0,0.2); //S4: Strafe to the left 2 inches
@@ -142,7 +142,7 @@ public class AutonWobbleAll extends LinearOpMode {
         driveTrain.tankDrive(DRIVE_SPEED,  -16,  -16, 3.0);  // S1: Forward to zone C
         driveTrain.straffe(33.0, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
-        sleep(1200);     // pause for servos to move
+        sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
         sleep(1200); //pause for servos to move
         driveTrain.straffe(-2.0,0.2); //S4: Strafe to the left 2 inches
