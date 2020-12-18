@@ -15,8 +15,8 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class OpenCV extends OpenCvPipeline {
     public String ringPosition;
-    public Mat topRectangle;
-    public Mat bottomRectangle;
+    public Mat topRectangle = new Mat();
+    public Mat bottomRectangle = new Mat();
     public OpenCvWebcam camera;
 
     public String getPosition()
@@ -24,7 +24,7 @@ public class OpenCV extends OpenCvPipeline {
         return ringPosition;
     }
     public OpenCV(HardwareMap hardwareMap) {
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webcam"),
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"),
                 hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()));
     }
 
