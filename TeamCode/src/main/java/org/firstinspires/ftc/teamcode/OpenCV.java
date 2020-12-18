@@ -31,7 +31,7 @@ public class OpenCV extends OpenCvPipeline {
     public void init(OpenCV detector) {
         camera.openCameraDevice();
         camera.setPipeline(detector);
-        camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_LEFT);
+        camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_RIGHT);
     }
 
     @Override
@@ -41,16 +41,16 @@ public class OpenCV extends OpenCvPipeline {
         Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2YCrCb);
 
         Rect bottomRect = new Rect(
-                200,
-                200,
-                10,
-                40
+                320,
+                430,
+                40,
+                10
         );
         Rect topRect = new Rect(
-                100,
-                100,
-                10,
-                40
+                320,
+                380,
+                40,
+                10
         );
 
         Imgproc.rectangle(input, topRect, new Scalar(0, 255, 0), 2);
