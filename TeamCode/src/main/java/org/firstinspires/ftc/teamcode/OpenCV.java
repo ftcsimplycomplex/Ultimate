@@ -70,6 +70,8 @@ public class OpenCV extends OpenCvPipeline {
             ringPosition = "A";
         }
 
+        topRectangle.release();
+        bottomRectangle.release();
 
         return input;
     }

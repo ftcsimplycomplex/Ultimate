@@ -97,11 +97,13 @@ public class AutonWobbleAll extends LinearOpMode {
         wobbleGoal.closeClaw();
         wobbleGoal.raiseRings();
 
+/*
         detector = new OpenCV(hardwareMap);
         detector.init(detector);
         while(!opModeIsActive()){
             this.ringPosition = detector.getPosition();
         }
+*/
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
