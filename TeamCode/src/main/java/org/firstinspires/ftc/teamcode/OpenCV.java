@@ -13,66 +13,87 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
-public class OpenCV extends OpenCvPipeline {
-    public String ringPosition;
-    public Mat topRectangle = new Mat();
-    public Mat bottomRectangle = new Mat();
+public class OpenCV {
+    private String ringPosition;
     public OpenCvWebcam camera;
 
+    /*
+    * "Getter" method to return target zone A, B, or C as a string
+    */
     public String getPosition()
     {
         return ringPosition;
     }
+
+ /*
+ * Constructor: Gets and opens the webcam, sets the processing pipeline, and starts camera streaming.
+ */
     public OpenCV(HardwareMap hardwareMap) {
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"),
                 hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()));
-    }
-
-    public void init(OpenCV detector) {
         camera.openCameraDevice();
-        camera.setPipeline(detector);
+        camera.setPipeline(new UltimatePipeline());
         camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_RIGHT);
     }
 
-    @Override
-    public Mat processFrame(Mat input) {
-        if(input.empty()) return input;
+    public void init(OpenCV detector) {     //TODO get rid of this after testing.
+    }
 
-        Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2YCrCb);
+    /**
+     * stopDetect method.  Shuts it all down to save processing time after the robot starts moving.
+     */
+    void stopDetect(){
+        camera.stopStreaming();
+        camera.closeCameraDevice();
+        //TODO Should we free up memory, too?
+    }
 
-        Rect bottomRect = new Rect(
-                320,
-                430,
-                40,
-                10
-        );
-        Rect topRect = new Rect(
-                320,
-                380,
-                40,
-                10
-        );
 
-        Imgproc.rectangle(input, topRect, new Scalar(0, 255, 0), 2);
-        Imgproc.rectangle(input, bottomRect, new Scalar(0, 255, 0), 2);
+    class UltimatePipeline extends OpenCvPipeline {
 
-        Core.extractChannel(input.submat(bottomRect), bottomRectangle, 2);
-        Core.extractChannel(input.submat(topRect), topRectangle, 2);
+        private Mat topRectangle = new Mat();
+        private Mat bottomRectangle = new Mat();
 
-        double bottomAverage = Core.mean(bottomRectangle).val[0];
-        double topAverage = Core.mean(topRectangle).val[0];
+        @Override
+        public Mat processFrame(Mat input) {
+            if (input.empty()) return input;
 
-        if(topAverage < 50 && bottomAverage < 50) {
-            ringPosition = "C";
-        } else if(topAverage > 50 && bottomAverage < 50) {
-            ringPosition = "B";
-        } else {
-            ringPosition = "A";
+            Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2YCrCb);
+
+            Rect bottomRect = new Rect(
+                    320,
+                    430,
+                    40,
+                    10
+            );
+            Rect topRect = new Rect(
+                    320,
+                    380,
+                    40,
+                    10
+            );
+
+            Imgproc.rectangle(input, topRect, new Scalar(0, 255, 0), 2);
+            Imgproc.rectangle(input, bottomRect, new Scalar(0, 255, 0), 2);
+
+            Core.extractChannel(input.submat(bottomRect), bottomRectangle, 2);
+            Core.extractChannel(input.submat(topRect), topRectangle, 2);
+
+            double bottomAverage = Core.mean(bottomRectangle).val[0];
+            double topAverage = Core.mean(topRectangle).val[0];
+
+            if (topAverage < 50 && bottomAverage < 50) {
+                ringPosition = "C";
+            } else if (topAverage > 50 && bottomAverage < 50) {
+                ringPosition = "B";
+            } else {
+                ringPosition = "A";
+            }
+
+//            topRectangle.release();
+//            bottomRectangle.release();
+
+            return input;
         }
-
-        topRectangle.release();
-        bottomRectangle.release();
-
-        return input;
     }
 }
