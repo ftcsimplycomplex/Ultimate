@@ -87,7 +87,7 @@ public class AutonWobbleAll extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
+        telemetry.addData("Status", "INIT");
         telemetry.update();
         wobbleGoal = new WobbleGoal(this);
         driveTrain = new DriveTrain (this);
@@ -101,6 +101,8 @@ public class AutonWobbleAll extends LinearOpMode {
         ringPosition = "B";         // Default if we have to comment out vision
 
         detector = new OpenCV(hardwareMap);
+        telemetry.addData("Status", "WAITING");
+        telemetry.update();
 //        detector.init(detector);
         while(!opModeIsActive()){
             ringPosition = detector.getPosition();
@@ -116,7 +118,7 @@ public class AutonWobbleAll extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        driveTrain.tankDrive(DRIVE_SPEED, 127, 127, 10);
+        driveTrain.tankDrive(DRIVE_SPEED, 126, 126, 10);
         driveTrain.straffe(13, 0.5);
         wobbleGoal.dropRings();
         sleep(1200);

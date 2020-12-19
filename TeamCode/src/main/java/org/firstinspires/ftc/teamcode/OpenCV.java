@@ -15,7 +15,7 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class OpenCV {
     private String ringPosition;
-    public OpenCvWebcam camera;
+    private OpenCvWebcam camera;
 
     /*
     * "Getter" method to return target zone A, B, or C as a string
@@ -36,9 +36,6 @@ public class OpenCV {
         camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_RIGHT);
     }
 
-    public void init(OpenCV detector) {     //TODO get rid of this after testing.
-    }
-
     /**
      * stopDetect method.  Shuts it all down to save processing time after the robot starts moving.
      */
@@ -53,6 +50,20 @@ public class OpenCV {
 
         private Mat topRectangle = new Mat();
         private Mat bottomRectangle = new Mat();
+        private Rect bottomRect = new Rect(
+                360,
+                440,
+                40,
+                10
+        );
+        private Rect topRect = new Rect(
+                360,
+                390,
+                40,
+                10
+        );
+        private double bottomAverage;
+        private double topAverage;
 
         @Override
         public Mat processFrame(Mat input) {
@@ -60,27 +71,14 @@ public class OpenCV {
 
             Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2YCrCb);
 
-            Rect bottomRect = new Rect(
-                    320,
-                    430,
-                    40,
-                    10
-            );
-            Rect topRect = new Rect(
-                    320,
-                    380,
-                    40,
-                    10
-            );
-
             Imgproc.rectangle(input, topRect, new Scalar(0, 255, 0), 2);
             Imgproc.rectangle(input, bottomRect, new Scalar(0, 255, 0), 2);
 
             Core.extractChannel(input.submat(bottomRect), bottomRectangle, 2);
             Core.extractChannel(input.submat(topRect), topRectangle, 2);
 
-            double bottomAverage = Core.mean(bottomRectangle).val[0];
-            double topAverage = Core.mean(topRectangle).val[0];
+            bottomAverage = Core.mean(bottomRectangle).val[0];
+            topAverage = Core.mean(topRectangle).val[0];
 
             if (topAverage < 50 && bottomAverage < 50) {
                 ringPosition = "C";
