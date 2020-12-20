@@ -14,7 +14,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 public class OpenCV {
-    private String ringPosition;
+    private static String ringPosition;
     private OpenCvWebcam camera;
 
     /*
@@ -46,10 +46,16 @@ public class OpenCV {
     }
 
 
-    class UltimatePipeline extends OpenCvPipeline {
+    public static class UltimatePipeline extends OpenCvPipeline {
 
+/*
         private Mat topRectangle = new Mat();
         private Mat bottomRectangle = new Mat();
+*/
+
+        private Mat topSample = new Mat();      // For submat crops
+        private Mat bottomSample = new Mat();   // For submat crops
+
         private Rect bottomRect = new Rect(
                 360,
                 440,
@@ -69,16 +75,25 @@ public class OpenCV {
         public Mat processFrame(Mat input) {
             if (input.empty()) return input;
 
-            Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2YCrCb);
+            Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2YCrCb);    // Convert color space in-place
 
-            Imgproc.rectangle(input, topRect, new Scalar(0, 255, 0), 2);
-            Imgproc.rectangle(input, bottomRect, new Scalar(0, 255, 0), 2);
+            Imgproc.rectangle(input, topRect, new Scalar(0, 255, 0), 2);        // Draw rectangles on input buffer
+            Imgproc.rectangle(input, bottomRect, new Scalar(0, 255, 0), 2);     // for drive team feedback
 
+            input.submat(topRect).copyTo(topSample);
+            input.submat(bottomRect).copyTo(bottomSample);
+
+/*
             Core.extractChannel(input.submat(bottomRect), bottomRectangle, 2);
             Core.extractChannel(input.submat(topRect), topRectangle, 2);
+*/
+            // Try it this way:
+            Core.extractChannel(bottomSample, bottomSample, 2);
+            Core.extractChannel(topSample, topSample, 2);
 
-            bottomAverage = Core.mean(bottomRectangle).val[0];
-            topAverage = Core.mean(topRectangle).val[0];
+
+            bottomAverage = Core.mean(bottomSample).val[0];
+            topAverage = Core.mean(topSample).val[0];
 
             if (topAverage < 50 && bottomAverage < 50) {
                 ringPosition = "C";
