@@ -15,6 +15,11 @@ import org.openftc.easyopencv.OpenCvWebcam;
 
 public class OpenCV {
     private static String ringPosition;
+
+    // FBO telemetry
+    private double topAverage;
+    private double bottomAverage;
+
     private OpenCvWebcam camera;
 
     /*
@@ -24,6 +29,9 @@ public class OpenCV {
     {
         return ringPosition;
     }
+
+    public double getTopAverage() {return topAverage;}  // For telemetry
+    public double getBottomAverage() {return bottomAverage;}  // For telemetry
 
  /*
  * Constructor: Gets and opens the webcam, sets the processing pipeline, and starts camera streaming.
@@ -46,54 +54,71 @@ public class OpenCV {
     }
 
 
-    public static class UltimatePipeline extends OpenCvPipeline {
+    public class UltimatePipeline extends OpenCvPipeline {
 
-/*
         private Mat topRectangle = new Mat();
         private Mat bottomRectangle = new Mat();
-*/
+
+        private Mat convertedInput = new Mat(); // Working copy; keeps submats out of input buffer
 
         private Mat topSample = new Mat();      // For submat crops
         private Mat bottomSample = new Mat();   // For submat crops
 
-        private Rect bottomRect = new Rect(
+        private Rect bottomRect = new Rect(     // Dimensions and locations for sampling
                 360,
                 440,
                 40,
                 10
         );
-        private Rect topRect = new Rect(
+        private Rect topRect = new Rect(        // Dimensions and locations for sampling
                 360,
                 390,
                 40,
                 10
         );
+
+/* While we do something else for telemetry
         private double bottomAverage;
         private double topAverage;
+*/
+
+        @Override
+        public void init(Mat firstFrame)
+        {
+            Imgproc.cvtColor(firstFrame, convertedInput, Imgproc.COLOR_RGB2YCrCb);    // Convert color space to working copy
+
+            topSample = convertedInput.submat(topRect);         // Submat pointers are persistent
+            bottomSample = convertedInput.submat(bottomRect);   // Submat pointers are persistent
+        }
 
         @Override
         public Mat processFrame(Mat input) {
             if (input.empty()) return input;
 
-            Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2YCrCb);    // Convert color space in-place
+            Imgproc.cvtColor(input, convertedInput, Imgproc.COLOR_RGB2YCrCb);    // Convert color space to working copy
+
+            topSample = convertedInput.submat(topRect);         // Shouldn't be necessary according to the docs
+            bottomSample = convertedInput.submat(bottomRect);   // Shouldn't be necessary according to the docs
 
             Imgproc.rectangle(input, topRect, new Scalar(0, 255, 0), 2);        // Draw rectangles on input buffer
             Imgproc.rectangle(input, bottomRect, new Scalar(0, 255, 0), 2);     // for drive team feedback
 
-            input.submat(topRect).copyTo(topSample);
-            input.submat(bottomRect).copyTo(bottomSample);
+/*
+            convertedInput.submat(topRect).copyTo(topSample);
+            convertedInput.submat(bottomRect).copyTo(bottomSample);
+*/
 
 /*
             Core.extractChannel(input.submat(bottomRect), bottomRectangle, 2);
             Core.extractChannel(input.submat(topRect), topRectangle, 2);
 */
             // Try it this way:
-            Core.extractChannel(bottomSample, bottomSample, 2);
-            Core.extractChannel(topSample, topSample, 2);
+            Core.extractChannel(bottomSample, bottomRectangle, 2);
+            Core.extractChannel(topSample, topRectangle, 2);
 
 
-            bottomAverage = Core.mean(bottomSample).val[0];
-            topAverage = Core.mean(topSample).val[0];
+            bottomAverage = Core.mean(bottomRectangle).val[0];
+            topAverage = Core.mean(topRectangle).val[0];
 
             if (topAverage < 50 && bottomAverage < 50) {
                 ringPosition = "C";

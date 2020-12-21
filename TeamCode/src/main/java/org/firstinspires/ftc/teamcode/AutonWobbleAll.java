@@ -106,6 +106,8 @@ public class AutonWobbleAll extends LinearOpMode {
 //        detector.init(detector);
         while(!opModeIsActive()){
             ringPosition = detector.getPosition();
+            telemetry.addData("topAverage: ",detector.getTopAverage());
+            telemetry.addData("bottomAverage: ",detector.getBottomAverage());
             telemetry.addData("Target Zone is ", ringPosition);
             telemetry.update();
             sleep(250);     // Report four times per second
