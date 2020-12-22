@@ -66,13 +66,13 @@ public class OpenCV {
 
         private Rect bottomRect = new Rect(     // Dimensions and locations for sampling
                 360,
-                440,
+                450,
                 40,
                 10
         );
         private Rect topRect = new Rect(        // Dimensions and locations for sampling
                 360,
-                390,
+                400,
                 40,
                 10
         );
@@ -120,11 +120,16 @@ public class OpenCV {
             bottomAverage = Core.mean(bottomRectangle).val[0];
             topAverage = Core.mean(topRectangle).val[0];
 
-            if (topAverage < 50 && bottomAverage < 50) {
+/*
+* Telemetry from on-field tests show that a rectangle sample on an orange ring produces a topAverage / bottomAverage
+* of about 90, where no ring (no orange color) yields something around 125.  So, let's use 110 as the threshold,
+* above 100 is no ring, below 100 is ring.
+*/
+            if (topAverage < 110 && bottomAverage < 110) {      // Both rectangles detect orange = 4 rings
                 ringPosition = "C";
-            } else if (topAverage > 50 && bottomAverage < 50) {
-                ringPosition = "B";
-            } else {
+            } else if (topAverage > 110 && bottomAverage < 110) {   // Top rectangle is not orange, bottom
+                ringPosition = "B";                                 // is orange = 1 ring
+            } else {                    // default is no rings
                 ringPosition = "A";
             }
 
