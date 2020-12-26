@@ -16,9 +16,16 @@ import org.openftc.easyopencv.OpenCvWebcam;
 public class OpenCV {
     private static String ringPosition;
 
-    // FBO telemetry
+    // Exposed outside of the pipeline for telemetry
     private double topAverage;
     private double bottomAverage;
+
+    /*
+     * Telemetry from on-field tests show that a rectangle sample on an orange ring produces a topAverage / bottomAverage
+     * of about 90, where no ring (no orange color) yields something around 125.  So, let's use 110 as the threshold,
+     * above 100 is no ring, below 100 is ring.
+     */
+    private final double ORANGE_THRESHOLD = 110;
 
     private OpenCvWebcam camera;
 
@@ -30,8 +37,8 @@ public class OpenCV {
         return ringPosition;
     }
 
-    public double getTopAverage() {return topAverage;}  // For telemetry
-    public double getBottomAverage() {return bottomAverage;}  // For telemetry
+    public double getTopAverage() {return topAverage;}  // "Getter" method for telemetry
+    public double getBottomAverage() {return bottomAverage;}  // "Getter" method for telemetry
 
  /*
  * Constructor: Gets and opens the webcam, sets the processing pipeline, and starts camera streaming.
@@ -77,10 +84,6 @@ public class OpenCV {
                 10
         );
 
-/* While we do something else for telemetry
-        private double bottomAverage;
-        private double topAverage;
-*/
 
         @Override
         public void init(Mat firstFrame)
@@ -103,38 +106,19 @@ public class OpenCV {
             Imgproc.rectangle(input, topRect, new Scalar(0, 255, 0), 2);        // Draw rectangles on input buffer
             Imgproc.rectangle(input, bottomRect, new Scalar(0, 255, 0), 2);     // for drive team feedback
 
-/*
-            convertedInput.submat(topRect).copyTo(topSample);
-            convertedInput.submat(bottomRect).copyTo(bottomSample);
-*/
-
-/*
-            Core.extractChannel(input.submat(bottomRect), bottomRectangle, 2);
-            Core.extractChannel(input.submat(topRect), topRectangle, 2);
-*/
-            // Try it this way:
             Core.extractChannel(bottomSample, bottomRectangle, 2);
             Core.extractChannel(topSample, topRectangle, 2);
-
 
             bottomAverage = Core.mean(bottomRectangle).val[0];
             topAverage = Core.mean(topRectangle).val[0];
 
-/*
-* Telemetry from on-field tests show that a rectangle sample on an orange ring produces a topAverage / bottomAverage
-* of about 90, where no ring (no orange color) yields something around 125.  So, let's use 110 as the threshold,
-* above 100 is no ring, below 100 is ring.
-*/
-            if (topAverage < 110 && bottomAverage < 110) {      // Both rectangles detect orange = 4 rings
+            if (topAverage < ORANGE_THRESHOLD && bottomAverage < ORANGE_THRESHOLD) {            // Both rectangles detect orange = 4 rings
                 ringPosition = "C";
-            } else if (topAverage > 110 && bottomAverage < 110) {   // Top rectangle is not orange, bottom
-                ringPosition = "B";                                 // is orange = 1 ring
+            } else if (topAverage > ORANGE_THRESHOLD && bottomAverage < ORANGE_THRESHOLD) {     // Top rectangle is not orange, bottom
+                ringPosition = "B";                                                             // is orange = 1 ring
             } else {                    // default is no rings
                 ringPosition = "A";
             }
-
-//            topRectangle.release();
-//            bottomRectangle.release();
 
             return input;
         }
