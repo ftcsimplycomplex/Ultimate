@@ -14,15 +14,15 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class WobbleGoal {
-    //Declare Varibles For Contructing The Object
+    //Declare Variables For Constructing The Object
     private OpMode opMode;
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
-    //Declare Varibles for motors
+    //Declare Variables for motors
     private Servo clawServo;
     private Servo armServo;
     private Servo ringServo;
-    //Set Constants for All the Different Servo Postions
+    //Set Constants for All the Different Servo Positions
     private double OPEN_CLAW_POS = 0.4;     //Reference engineering notebook for numbers 11/28/2020
     private double CLOSED_CLAW_POS = 0.7;   //Reference engineering notebook for numbers 11/28/2020
     private double PARK_ARM_POS = 0.205;    //Reference engineering notebook for numbers 11/25/2020
