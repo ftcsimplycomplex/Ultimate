@@ -54,8 +54,9 @@ public class IntakeTest extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+        //Initialize hardware variables
         BackIntake = hardwareMap.get(DcMotor.class, "COMPLIANT");
-       FrontIntake = hardwareMap.get(DcMotor.class, "GECKO");
+        FrontIntake = hardwareMap.get(DcMotor.class, "GECKO");
 
         telemetry.addLine("Motors mapped");
         telemetry.update();
@@ -63,12 +64,15 @@ public class IntakeTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            backPower = -gamepad2.left_stick_y;
+            frontPower = -gamepad2.right_stick_y;
 
-        backPower = -gamepad2.left_stick_y;
-        frontPower = -gamepad2.right_stick_y;
+            BackIntake.setPower(Range.clip(backPower, -1,1));
+            FrontIntake.setPower(Range.clip(frontPower, -1,1));
 
-        BackIntake.setPower(Range.clip(backPower, -1,1));
-        FrontIntake.setPower(Range.clip(frontPower, -1,1));
+            //Added telemetry
+            telemetry.addData("Motors", "Front (%.2f), Back (%.2f)", frontPower, backPower);
+            telemetry.update();
         }
     }
 }
