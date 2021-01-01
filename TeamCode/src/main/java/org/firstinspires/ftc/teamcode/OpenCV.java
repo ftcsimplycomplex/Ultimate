@@ -14,6 +14,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
 
 public class OpenCV extends OpenCvPipeline {
+
     public String ringPosition;
     public Mat topRectangle = new Mat();
     public Mat bottomRectangle = new Mat();
@@ -21,6 +22,7 @@ public class OpenCV extends OpenCvPipeline {
 
     public String getPosition()
     {
+
         return ringPosition;
     }
     public OpenCV(HardwareMap hardwareMap) {

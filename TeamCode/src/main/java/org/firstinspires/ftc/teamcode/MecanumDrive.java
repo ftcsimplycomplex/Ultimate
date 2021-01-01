@@ -64,12 +64,17 @@ public class MecanumDrive extends LinearOpMode {
     private DcMotor rightFront = null;
     private DcMotor leftRear = null;
     private DcMotor rightRear = null;
+    private DcMotor frontMotor = null;
+    private DcMotor backMotor = null;
+
     // Declare Buttons
     private boolean leftUpX;
     private boolean rightUpB;
     private boolean midUpA;
     private boolean yButton;
     private boolean lBumperUp;
+
+
     // Declare Wobble Goal Mechinism
     public WobbleGoal wobbleGoal;
     // Declare Joystick variables
@@ -91,6 +96,8 @@ public class MecanumDrive extends LinearOpMode {
         rightFront = hardwareMap.get(DcMotor.class, "RFD");
         leftRear  = hardwareMap.get(DcMotor.class, "LRD");
         rightRear = hardwareMap.get(DcMotor.class, "RRD");
+        frontMotor = hardwareMap.get(DcMotor.class, "GECKO");
+        backMotor = hardwareMap.get(DcMotor.class, "COMPLIANT");
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftFront.setDirection(DcMotor.Direction.REVERSE);
@@ -129,6 +136,7 @@ public class MecanumDrive extends LinearOpMode {
             }
 
 
+
             // gamepad button X - Park Arm
             if(gamepad2.x && leftUpX){
                 leftUpX = false;
@@ -165,6 +173,24 @@ public class MecanumDrive extends LinearOpMode {
                 } else {
                     wobbleGoal.raiseRings();
                 }
+
+            }
+            if (gamepad2.left_trigger!=0) {
+                frontMotor.setPower(1);
+                backMotor.setPower(1);
+
+            } else {
+                frontMotor.setPower(0);
+                backMotor.setPower(0);
+            }
+
+            if (gamepad2.right_trigger!=0) {
+                frontMotor.setPower(-1);
+                backMotor.setPower(-1);
+
+            } else {
+                frontMotor.setPower(0);
+                backMotor.setPower(0);
             }
 
              //defining joystick variables
