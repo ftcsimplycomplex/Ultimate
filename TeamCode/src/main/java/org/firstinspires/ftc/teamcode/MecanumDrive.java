@@ -96,8 +96,8 @@ public class MecanumDrive extends LinearOpMode {
         rightFront = hardwareMap.get(DcMotor.class, "RFD");
         leftRear  = hardwareMap.get(DcMotor.class, "LRD");
         rightRear = hardwareMap.get(DcMotor.class, "RRD");
-        frontMotor = hardwareMap.get(DcMotor.class, "GECKO");
-        backMotor = hardwareMap.get(DcMotor.class, "COMPLIANT");
+        frontMotor = hardwareMap.get(DcMotor.class, "GECKO"); //Front intake motor
+        backMotor = hardwareMap.get(DcMotor.class, "COMPLIANT"); //Back intake motor
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftFront.setDirection(DcMotor.Direction.REVERSE);
@@ -173,25 +173,30 @@ public class MecanumDrive extends LinearOpMode {
                 } else {
                     wobbleGoal.raiseRings();
                 }
-
             }
+
+            //using left and right trigger for intake
             if (gamepad2.left_trigger!=0) {
                 frontMotor.setPower(1);
                 backMotor.setPower(1);
 
+                //added telemetry
+                telemetry.addData("trigger values","left (%.2f), right (%.2f)",gamepad2.left_trigger,gamepad2.right_trigger);
+                telemetry.update();
             } else {
-                frontMotor.setPower(0);
-                backMotor.setPower(0);
+                if (gamepad2.right_trigger!=0) {
+                    frontMotor.setPower(-1);
+                    backMotor.setPower(-1);
+
+                    //added telemetry
+                    telemetry.addData("trigger values","left (%.2f), right (%.2f)",gamepad2.left_trigger,gamepad2.right_trigger);
+                    telemetry.update();
+                } else {
+                    frontMotor.setPower(0);
+                    backMotor.setPower(0);
+                }
             }
 
-            if (gamepad2.right_trigger!=0) {
-                frontMotor.setPower(-1);
-                backMotor.setPower(-1);
-
-            } else {
-                frontMotor.setPower(0);
-                backMotor.setPower(0);
-            }
 
              //defining joystick variables
              translateY  = -gamepad1.left_stick_y ;
