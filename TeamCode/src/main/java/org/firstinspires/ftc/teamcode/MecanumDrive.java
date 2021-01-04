@@ -73,10 +73,13 @@ public class MecanumDrive extends LinearOpMode {
     private boolean midUpA;
     private boolean yButton;
     private boolean lBumperUp;
+    private boolean rBumperUp;
 
 
     // Declare Wobble Goal Mechinism
     public WobbleGoal wobbleGoal;
+    // Declare kicker
+    public Kicker kicker;
     // Declare Joystick variables
     private double translateY, translateX, rotate;
     // Declare motor power variables
@@ -91,6 +94,7 @@ public class MecanumDrive extends LinearOpMode {
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         wobbleGoal = new WobbleGoal(this);
+        kicker = new Kicker(this);
 
         leftFront  = hardwareMap.get(DcMotor.class, "LFD");
         rightFront = hardwareMap.get(DcMotor.class, "RFD");
@@ -111,6 +115,10 @@ public class MecanumDrive extends LinearOpMode {
 
         //start position for ring drop arm
         wobbleGoal.raiseRings();
+
+        //Start position for kicker
+        kicker.rest();
+
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -133,6 +141,9 @@ public class MecanumDrive extends LinearOpMode {
             }
             if(!gamepad2.left_bumper){
                 lBumperUp = true;
+            }
+            if (!gamepad2.right_bumper) {
+                rBumperUp = true;
             }
 
 
@@ -166,13 +177,16 @@ public class MecanumDrive extends LinearOpMode {
                 }
             }
             if(gamepad2.left_bumper && lBumperUp) {
-                lBumperUp = false;
-                // toggles ring dropper
-                if (wobbleGoal.arm2Up) {
-                    wobbleGoal.dropRings();
-                } else {
-                    wobbleGoal.raiseRings();
-                }
+            kicker.shoot();
+            kicker.rest();
+            }
+
+            if (gamepad2.right_bumper && rBumperUp) {
+                kicker.flywheel();
+
+            }
+            else {
+                kicker.stopFlywheel();
             }
 
             //using left and right trigger for intake
