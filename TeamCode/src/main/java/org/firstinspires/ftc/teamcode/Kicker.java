@@ -29,7 +29,7 @@ public class Kicker {
     public Kicker (OpMode opMode) {
         hardwareMap = opMode.hardwareMap;
         telemetry = opMode.telemetry;
-        Kicker= hardwareMap.get(Servo.class, "Kicker");
+        Kicker= hardwareMap.get(Servo.class, "KICKER");
     }
     //rest/init position for kicker
     public void rest () {
@@ -41,10 +41,10 @@ public class Kicker {
     }
     //Turns on flywheel
     public void flywheel() {
-        flywheel.setPower(1);
+//        flywheel.setPower(1);
     }
     //Turns off flywheel
     public void stopFlywheel () {
-        flywheel.setPower(0);
+//        flywheel.setPower(0);
     }
 }
