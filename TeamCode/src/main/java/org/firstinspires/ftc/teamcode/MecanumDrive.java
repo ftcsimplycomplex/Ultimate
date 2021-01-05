@@ -74,6 +74,8 @@ public class MecanumDrive extends LinearOpMode {
     private boolean yButton;
     private boolean lBumperUp;
     private boolean rBumperUp;
+    private boolean dpadDownUp;
+    private boolean dpadUpUp;
 
 
     // Declare Wobble Goal Mechinism
@@ -145,6 +147,12 @@ public class MecanumDrive extends LinearOpMode {
             if (!gamepad2.right_bumper) {
                 rBumperUp = true;
             }
+            if (!gamepad2.dpad_down){
+                dpadDownUp = true;
+            }
+            if (!gamepad2.dpad_up){
+                dpadUpUp = true;
+            }
 
 
 
@@ -184,11 +192,21 @@ public class MecanumDrive extends LinearOpMode {
 
             if (gamepad2.right_bumper && rBumperUp) {
                 kicker.flywheel();
-
             }
             else {
                 kicker.stopFlywheel();
             }
+
+            // Change the flywheel speed: Dpad buttons set the speed invoked by the right bumper
+            if(gamepad2.dpad_up && dpadUpUp){
+                dpadUpUp = false;
+                kicker.increaseFlywheel();
+            }
+            if(gamepad2.dpad_down && dpadDownUp){
+                dpadDownUp = false;
+                kicker.decreaseFlywheel();
+            }
+
 
             //using left and right trigger for intake
             if (gamepad2.left_trigger!=0) {
