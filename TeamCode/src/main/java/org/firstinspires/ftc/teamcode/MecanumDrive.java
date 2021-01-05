@@ -256,9 +256,10 @@ public class MecanumDrive extends LinearOpMode {
             rightRear.setPower(Range.clip(rrPower, -1.0, +1.0));
 
             // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+           /* telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Motors", "left (%.2f), right (%.2f)", lfPower, rfPower);
             telemetry.update();
+        */
         }
     }
 }

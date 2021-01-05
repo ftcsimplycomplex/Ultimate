@@ -31,7 +31,7 @@ public class Kicker {
 
         kickerArm = hardwareMap.get(Servo.class, "KICKER");
         flywheel = hardwareMap.get(DcMotor.class, "FLYWHEEL");
-        flywheel.setDirection(DcMotorSimple.Direction.FORWARD);
+        flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         flywheel.setPower(0.0);
     }
