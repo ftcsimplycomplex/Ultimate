@@ -34,6 +34,7 @@ public class OpenCV {
     */
     public String getPosition()
     {
+
         return ringPosition;
     }
 
