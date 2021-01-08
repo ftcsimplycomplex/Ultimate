@@ -31,9 +31,25 @@ public class Kicker {
 
         kickerArm = hardwareMap.get(Servo.class, "KICKER");
         flywheel = hardwareMap.get(DcMotor.class, "FLYWHEEL");
-        flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         flywheel.setPower(0.0);
+        /*
+        * 8-JAN-2021 Joe Levy:
+        * Motor direction is affected by selection of motor in Rev configuration screen.  In
+        * particular, the two goBILDA motors seem to run in the opposite direction from the others.
+        *
+        * Further: the encoder direction may be backwards.  I have selected the REVERSE motor direction
+        * for the flywheel, and the Matrix 12 Volt motor during configuration.  To match up the
+        * encoder direction with the direction the motor turns (required for speed controlled
+        * RUN_USING_ENCODER operation) I've intentionally reversed the polarity of the motor power
+        * connection.
+        *
+        * Conceivably, I have an incorrect encoder cable.  There really should be a software setting
+        * to allow for this.
+        */
+        flywheel.setDirection(DcMotorSimple.Direction.REVERSE);                                                                // REVERSE for goBilda.
+        flywheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     //rest/init position for kicker
@@ -54,6 +70,8 @@ public class Kicker {
     //Turns off flywheel
     public void stopFlywheel() {
         flywheel.setPower(0.0);
+//        telemetry.addData("Encoder Ticks: ", flywheel.getCurrentPosition());
+//        telemetry.update();
     }
 
     public void increaseFlywheel() {    // bumps the flywheel speed up by one increment
