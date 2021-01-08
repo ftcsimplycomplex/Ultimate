@@ -10,13 +10,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Kicker {
-    //Init varibles
+    //Init variables
     private OpMode opMode;
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
-    //Motor Varibles
+
+    //Motor Variables
     private Servo kickerArm = null;
     private DcMotor flywheel = null;
+
     //Servo Positions
     private double restPos = 0.42;
     private double shootPos = 0.64;
@@ -69,5 +71,4 @@ public class Kicker {
         telemetry.addData("Flywheel speed: ", flywheelSpeed);
         telemetry.update();
     }
-
 }

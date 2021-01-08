@@ -92,7 +92,6 @@ public class AutonWobbleAll extends LinearOpMode {
         wobbleGoal = new WobbleGoal(this);
         driveTrain = new DriveTrain (this);
 
-
         //Set start position when init is pressed
         wobbleGoal.parkArm();
         wobbleGoal.closeClaw();
