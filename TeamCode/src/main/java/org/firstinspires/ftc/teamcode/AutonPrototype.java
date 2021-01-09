@@ -128,19 +128,19 @@ public class AutonPrototype extends LinearOpMode {
         driveTrain.rotate(10,0.5);
         sleep(500);
         kicker.shoot();
-        sleep(300);
+        sleep(500);
         kicker.rest();
-        sleep(300);
+        sleep(3000);
 
         kicker.shoot();
-        sleep(300);
+        sleep(500);
         kicker.rest();
-        sleep(300);
+        sleep(3000);
 
         kicker.shoot();
-        sleep(300);
+        sleep(500);
         kicker.rest();
-        sleep(300);
+        kicker.stopFlywheel();
 
         driveTrain.rotate(-10,0.5);
 
