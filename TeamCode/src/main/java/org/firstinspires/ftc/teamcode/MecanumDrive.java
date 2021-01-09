@@ -78,7 +78,7 @@ public class MecanumDrive extends LinearOpMode {
     private boolean dpadUpUp;
 
 
-    // Declare Wobble Goal Mechinism
+    // Declare Wobble Goal Mechanism
     public WobbleGoal wobbleGoal;
     // Declare kicker
     public Kicker kicker;

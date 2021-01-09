@@ -62,9 +62,9 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="AutonWobbleAll", group="Linear Opmode")
+@Autonomous(name="AutonPrototype", group="Linear Opmode")
 /*@Disabled*/
-public class AutonWobbleAll extends LinearOpMode {
+public class AutonPrototype extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
@@ -81,6 +81,7 @@ public class AutonWobbleAll extends LinearOpMode {
 
     public WobbleGoal wobbleGoal;
     public DriveTrain driveTrain;
+    public Kicker kicker;
 
     public String ringPosition;
     public OpenCV detector;
@@ -91,11 +92,13 @@ public class AutonWobbleAll extends LinearOpMode {
         telemetry.update();
         wobbleGoal = new WobbleGoal(this);
         driveTrain = new DriveTrain (this);
+        kicker = new Kicker (this);
 
         //Set start position when init is pressed
         wobbleGoal.parkArm();
         wobbleGoal.closeClaw();
-        wobbleGoal.raiseRings();
+        kicker.rest();
+
 
         ringPosition = "B";         // Default if we have to comment out vision
 
@@ -119,12 +122,28 @@ public class AutonWobbleAll extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        driveTrain.tankDrive(DRIVE_SPEED, 126, 126, 10);
-        driveTrain.straffe(13, 0.5);
-        wobbleGoal.dropRings();
-        sleep(1200);
-        wobbleGoal.raiseRings();
-        sleep(1200);
+        driveTrain.tankDrive(DRIVE_SPEED, 47, 47, 5);
+        driveTrain.straffe(10, 0.5);
+        kicker.flywheel();
+        driveTrain.rotate(10,0.5);
+        sleep(500);
+        kicker.shoot();
+        sleep(300);
+        kicker.rest();
+        sleep(300);
+
+        kicker.shoot();
+        sleep(300);
+        kicker.rest();
+        sleep(300);
+
+        kicker.shoot();
+        sleep(300);
+        kicker.rest();
+        sleep(300);
+
+        driveTrain.rotate(-10,0.5);
+
 
         if(ringPosition.equals("A")){
             WobbleA();
@@ -134,7 +153,6 @@ public class AutonWobbleAll extends LinearOpMode {
             WobbleC();
         }
 
-//        WobbleB(); // Placeholder until we get vision
 
         driveTrain.rotate(180, 0.5);
 
@@ -142,8 +160,8 @@ public class AutonWobbleAll extends LinearOpMode {
         telemetry.update();
     }
     public void WobbleA(){
-        driveTrain.tankDrive(DRIVE_SPEED,  -64,  -64, 7.0);  // S1: Forward to zone A
-        driveTrain.straffe(31.0, 0.5);
+        driveTrain.tankDrive(DRIVE_SPEED,  13,  13, 3.0);  // S1: Forward to zone A
+        driveTrain.straffe(25.0, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
@@ -156,8 +174,8 @@ public class AutonWobbleAll extends LinearOpMode {
         driveTrain.tankDrive(DRIVE_SPEED,  14.0,  14.0, 5.0); // S5: Back up to Launch Line
     }
     public void WobbleB(){
-        driveTrain.tankDrive(DRIVE_SPEED,-40,-40, 7);  // S1: Forward to zone B
-        driveTrain.straffe(5, 0.5);
+        driveTrain.tankDrive(DRIVE_SPEED,37,37, 4);  // S1: Forward to zone B
+        driveTrain.straffe(3, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
@@ -169,8 +187,8 @@ public class AutonWobbleAll extends LinearOpMode {
         driveTrain.tankDrive(DRIVE_SPEED,  -9,  -9, 5.0); // S5: Back up to Launch Line
     }
     public void WobbleC(){
-        driveTrain.tankDrive(DRIVE_SPEED,  -16,  -16, 3.0);  // S1: Forward to zone C
-        driveTrain.straffe(33.0, 0.5);
+        driveTrain.tankDrive(DRIVE_SPEED,  61,  61, 3.0);  // S1: Forward to zone C
+        driveTrain.straffe(30.0, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
@@ -182,5 +200,6 @@ public class AutonWobbleAll extends LinearOpMode {
         driveTrain.tankDrive(DRIVE_SPEED,  -33.0,  -33.0, 5.0); // S5: Back up to Launch Line
     }
 }
+
 
 
