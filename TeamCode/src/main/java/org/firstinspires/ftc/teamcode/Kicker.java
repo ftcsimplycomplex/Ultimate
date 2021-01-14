@@ -5,6 +5,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -22,7 +25,7 @@ public class Kicker {
     //Servo Positions
     private double restPos = 0.42;
     private double shootPos = 0.64;
-    private double flywheelSpeed = 1.0;
+    private double flywheelSpeed = 0.45;
     private final double MAX_SPEED = 1.0;
     private final double FLYWHEEL_INCREMENT = 0.05;
 

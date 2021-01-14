@@ -122,27 +122,23 @@ public class AutonPrototype extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        driveTrain.tankDrive(DRIVE_SPEED, 47, 47, 5);
-        driveTrain.straffe(10, 0.5);
+        driveTrain.straffe(16,DRIVE_SPEED);
+        driveTrain.tankDrive(DRIVE_SPEED, -55, -55, 5);
+        driveTrain.straffe(-5, 0.5);
         kicker.flywheel();
-        driveTrain.rotate(10,0.5);
-        sleep(500);
+        sleep(2000);
         kicker.shoot();
         sleep(500);
         kicker.rest();
-        sleep(3000);
-
+        sleep(2500);
         kicker.shoot();
         sleep(500);
         kicker.rest();
-        sleep(3000);
-
+        sleep(2500);
         kicker.shoot();
         sleep(500);
         kicker.rest();
         kicker.stopFlywheel();
-
-        driveTrain.rotate(-10,0.5);
 
 
         if(ringPosition.equals("A")){
@@ -160,44 +156,44 @@ public class AutonPrototype extends LinearOpMode {
         telemetry.update();
     }
     public void WobbleA(){
-        driveTrain.tankDrive(DRIVE_SPEED,  13,  13, 3.0);  // S1: Forward to zone A
-        driveTrain.straffe(25.0, 0.5);
+        driveTrain.tankDrive(DRIVE_SPEED,  -5,  -5, 3.0);  // S1: Forward to zone A
+        driveTrain.straffe(-30.0, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
         sleep(1200); //pause for servos to move
-        driveTrain.straffe(-2.0,0.2); //S4: Strafe to the left 2 inches
+        driveTrain.straffe(2.0,0.2); //S4: Strafe to the left 2 inches
         sleep(1100);     // pause for servos to move
         wobbleGoal.parkArm(); // S5: Raise arm
         sleep(1200);     // pause for servos to move
-        driveTrain.straffe(-28.0, 0.5);
-        driveTrain.tankDrive(DRIVE_SPEED,  14.0,  14.0, 5.0); // S5: Back up to Launch Line
+        driveTrain.straffe(28.0, 0.5);
+        driveTrain.tankDrive(DRIVE_SPEED,  -14.0,  -14.0, 5.0); // S5: Back up to Launch Line
     }
     public void WobbleB(){
-        driveTrain.tankDrive(DRIVE_SPEED,37,37, 4);  // S1: Forward to zone B
-        driveTrain.straffe(3, 0.5);
+        driveTrain.tankDrive(DRIVE_SPEED,-29,-29, 4);  // S1: Forward to zone B
+        driveTrain.straffe(-8, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
         sleep(1200); //pause for servos to move
-        driveTrain.straffe(-2.0,0.2); //S4: Strafe to the left 2 inches
+        driveTrain.straffe(2.0,0.2); //S4: Strafe to the left 2 inches
         sleep(1100);     // pause for servos to move
         wobbleGoal.parkArm(); // S5: Raise arm
         sleep(1200);     // pause for servos to move
-        driveTrain.tankDrive(DRIVE_SPEED,  -9,  -9, 5.0); // S5: Back up to Launch Line
+        driveTrain.tankDrive(DRIVE_SPEED,  9,  9, 5.0); // S5: Back up to Launch Line
     }
     public void WobbleC(){
-        driveTrain.tankDrive(DRIVE_SPEED,  61,  61, 3.0);  // S1: Forward to zone C
-        driveTrain.straffe(30.0, 0.5);
+        driveTrain.tankDrive(DRIVE_SPEED,  -53,  -53, 3.0);  // S1: Forward to zone C
+        driveTrain.straffe(-35.0, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
         sleep(1200); //pause for servos to move
-        driveTrain.straffe(-2.0,0.2); //S4: Strafe to the left 2 inches
+        driveTrain.straffe(2.0,0.2); //S4: Strafe to the left 2 inches
         sleep(1100);     // pause for servos to move
         wobbleGoal.parkArm(); // S5: Raise arm
         sleep(1200);     // pause for servos to move
-        driveTrain.tankDrive(DRIVE_SPEED,  -33.0,  -33.0, 5.0); // S5: Back up to Launch Line
+        driveTrain.tankDrive(DRIVE_SPEED,  33.0,  33.0, 5.0); // S5: Back up to Launch Line
     }
 }
 

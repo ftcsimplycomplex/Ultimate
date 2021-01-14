@@ -34,7 +34,6 @@ public class OpenCV {
     */
     public String getPosition()
     {
-
         return ringPosition;
     }
 
@@ -49,7 +48,7 @@ public class OpenCV {
                 hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()));
         camera.openCameraDevice();
         camera.setPipeline(new UltimatePipeline());
-        camera.startStreaming(640, 480, OpenCvCameraRotation.SIDEWAYS_RIGHT);
+        camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
     }
 
     /**
@@ -73,15 +72,15 @@ public class OpenCV {
         private Mat bottomSample = new Mat();   // For submat crops
 
         private Rect bottomRect = new Rect(     // Dimensions and locations for sampling
-                360,
-                450,
-                40,
+                400,
+                300,
+                50,
                 10
         );
         private Rect topRect = new Rect(        // Dimensions and locations for sampling
-                360,
                 400,
-                40,
+                240,
+                50,
                 10
         );
 
