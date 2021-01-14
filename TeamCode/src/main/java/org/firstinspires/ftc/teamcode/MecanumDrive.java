@@ -73,6 +73,7 @@ public class MecanumDrive extends LinearOpMode {
     private boolean midUpA;
     private boolean yButton;
     private boolean lBumperUp;
+    private boolean lBumperUpGP1;
     private boolean rBumperUp;
     private boolean dpadDownUp;
     private boolean dpadUpUp;
@@ -86,7 +87,8 @@ public class MecanumDrive extends LinearOpMode {
     private double translateY, translateX, rotate;
     // Declare motor power variables
     private double lfPower, lrPower, rfPower, rrPower;
-
+    // Declare Constant variable to make it possibke to toggle direction for gamepad controls
+    private double sensitivty = 1;
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -152,6 +154,9 @@ public class MecanumDrive extends LinearOpMode {
             }
             if (!gamepad2.dpad_up){
                 dpadUpUp = true;
+            }
+            if(!gamepad1.left_bumper){
+                lBumperUpGP1 = true;
             }
 
 
@@ -235,18 +240,28 @@ public class MecanumDrive extends LinearOpMode {
              translateY  = -gamepad1.left_stick_y ;
              rotate = gamepad1.right_stick_x ;
              translateX = gamepad1.left_stick_x;
+
+             if(gamepad1.left_bumper&&lBumperUpGP1){
+                 lBumperUpGP1=false;
+                 if(sensitivty==1){
+                     sensitivty=-1;
+                 }else{
+                     sensitivty=1;
+                 }
+             }
+
              //Calculating power needed in each motor
             //turtleMode - 50% of normal power - if Right bumper is pressed (not toggle) turtleMode is on, if not, normal mode
             if (gamepad1.right_bumper) {
-                lfPower = (translateY + translateX + rotate)/2;
-                lrPower = (translateY - translateX + rotate)/2;
-                rfPower = (translateY - translateX - rotate)/2;
-                rrPower = (translateY + translateX - rotate)/2;
+                lfPower = sensitivty*(translateY + translateX + rotate)/2;
+                lrPower = sensitivty*(translateY - translateX + rotate)/2;
+                rfPower = sensitivty*(translateY - translateX - rotate)/2;
+                rrPower = sensitivty*(translateY + translateX - rotate)/2;
             } else {
-                lfPower = translateY + translateX + rotate;
-                lrPower = translateY - translateX + rotate;
-                rfPower = translateY - translateX - rotate;
-                rrPower = translateY + translateX - rotate;
+                lfPower = sensitivty*(translateY + translateX + rotate);
+                lrPower = sensitivty*(translateY - translateX + rotate);
+                rfPower = sensitivty*(translateY - translateX - rotate);
+                rrPower = sensitivty*(translateY + translateX - rotate);
             }
 
             // Send calculated power to wheels
