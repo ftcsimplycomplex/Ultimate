@@ -191,7 +191,7 @@ public class MecanumDrive extends LinearOpMode {
             }
             if(gamepad2.left_bumper && lBumperUp) {
             kicker.shoot();
-            sleep(500);
+            sleep(250);
             kicker.rest();
             }
 
