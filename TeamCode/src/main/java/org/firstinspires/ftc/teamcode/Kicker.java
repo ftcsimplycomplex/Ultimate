@@ -109,7 +109,7 @@ public class Kicker {
         double velocity;
 
         velocity = flywheel.getVelocity();
-        telemetry.addData("flywheel velocity = ", velocity);
+        telemetry.addData("flywheel velocity (ticks/sec) = ", velocity);
         telemetry.update();
     }
 }

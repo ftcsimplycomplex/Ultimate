@@ -77,6 +77,7 @@ public class MecanumDrive extends LinearOpMode {
     private boolean rBumperUp;
     private boolean dpadDownUp;
     private boolean dpadUpUp;
+    private boolean dpadLeftUp;
 
 
     // Declare Wobble Goal Mechanism
@@ -126,6 +127,7 @@ public class MecanumDrive extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        kicker.reportFlywheelPIDF();
         runtime.reset();
 
         // run until the end of the match (driver presses STOP)
@@ -149,11 +151,14 @@ public class MecanumDrive extends LinearOpMode {
             if (!gamepad2.right_bumper) {
                 rBumperUp = true;
             }
-            if (!gamepad2.dpad_down){
+            if (!gamepad2.dpad_down){   // dpad down reduces speed of flywheel
                 dpadDownUp = true;
             }
-            if (!gamepad2.dpad_up){
+            if (!gamepad2.dpad_up){     // dpad up increases speed of flywheel
                 dpadUpUp = true;
+            }
+            if (!gamepad2.dpad_left){     // dpad left reports speed of flywheel
+                dpadLeftUp = true;
             }
             if(!gamepad1.left_bumper){
                 lBumperUpGP1 = true;
@@ -212,6 +217,10 @@ public class MecanumDrive extends LinearOpMode {
                 kicker.decreaseFlywheel();
             }
 
+            if(gamepad2.dpad_left && dpadLeftUp){   // Reports flywheel actual velocity
+                dpadLeftUp = false;
+                kicker.reportFlywheelVelocity();
+            }
 
             //using left and right trigger for intake
             if (gamepad2.left_trigger!=0) {
