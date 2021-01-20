@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -20,7 +22,7 @@ public class Kicker {
 
     //Motor Variables
     private Servo kickerArm = null;
-    private DcMotor flywheel = null;
+    private DcMotorEx flywheel = null;
 
     //Servo Positions
     private double restPos = 0.42;
@@ -35,7 +37,7 @@ public class Kicker {
         telemetry = opMode.telemetry;
 
         kickerArm = hardwareMap.get(Servo.class, "KICKER");
-        flywheel = hardwareMap.get(DcMotor.class, "FLYWHEEL");
+        flywheel = hardwareMap.get(DcMotorEx.class, "FLYWHEEL");
         flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         flywheel.setPower(0.0);
         /*
@@ -90,6 +92,24 @@ public class Kicker {
         if (flywheelSpeed >= FLYWHEEL_INCREMENT)
             flywheelSpeed -= FLYWHEEL_INCREMENT;
         telemetry.addData("Flywheel speed: ", flywheelSpeed);
+        telemetry.update();
+    }
+    public void reportFlywheelPIDF(){
+        PIDFCoefficients pidfCoefficients;
+
+        pidfCoefficients = flywheel.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+        telemetry.addData("flywheel P = ", pidfCoefficients.p);
+        telemetry.addData("flywheel I = ", pidfCoefficients.i);
+        telemetry.addData("flywheel D = ", pidfCoefficients.d);
+        telemetry.addData("flywheel F = ", pidfCoefficients.f);
+        telemetry.update();
+    }
+
+    public void reportFlywheelVelocity(){
+        double velocity;
+
+        velocity = flywheel.getVelocity();
+        telemetry.addData("flywheel velocity = ", velocity);
         telemetry.update();
     }
 }
