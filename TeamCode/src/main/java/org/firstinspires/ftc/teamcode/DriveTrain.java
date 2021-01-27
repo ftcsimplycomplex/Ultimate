@@ -85,7 +85,7 @@ public class DriveTrain {
     }
 
 
-    public void tankDrive(double speed, double rightInches, double leftInches, double timeout){
+    public void tankDrive(double speed, double rightInches, double leftInches){
         // set motors to correct mode
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

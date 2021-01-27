@@ -26,7 +26,7 @@ public class Kicker {
 
     //Servo Positions
     private double restPos = 0.42;
-    private double shootPos = 0.64;
+    private double shootPos = 0.60;
     private double flywheelSpeed = 0.45;
     private final double MAX_SPEED = 1.0;
     private final double FLYWHEEL_INCREMENT = 0.05;
