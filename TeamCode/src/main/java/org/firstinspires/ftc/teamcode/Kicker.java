@@ -25,7 +25,7 @@ public class Kicker {
     private DcMotorEx flywheel = null;
 
     //Servo Positions
-    private double restPos = 0.42;
+    private double restPos = 0.39;
     private double shootPos = 0.60;
     private double flywheelSpeed = 0.45;
     private final double MAX_SPEED = 1.0;
