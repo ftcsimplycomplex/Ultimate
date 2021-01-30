@@ -98,7 +98,7 @@ public class WobbleC extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        driveTrain.tankDrive(DRIVE_SPEED,  106.75,  106.75, 5.0);  // S1: Forward to zone C
+        driveTrain.tankDrive(DRIVE_SPEED,  106.75,  106.75);  // S1: Forward to zone C
         driveTrain.straffe(28.0, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
@@ -106,7 +106,7 @@ public class WobbleC extends LinearOpMode {
         sleep(1000);     // pause for servos to move
         wobbleGoal.parkArm(); // S4: Raise arm
         sleep(3000);     // pause for servos to move
-        driveTrain.tankDrive(DRIVE_SPEED,  -33.0,  -33.0, 5.0); // S5: Back up to Launch Line
+        driveTrain.tankDrive(DRIVE_SPEED,  -33.0,  -33.0); // S5: Back up to Launch Line
 
 
         telemetry.addData("Path", "Complete");

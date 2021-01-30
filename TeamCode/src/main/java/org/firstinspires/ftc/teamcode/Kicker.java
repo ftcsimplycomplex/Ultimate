@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -20,11 +22,11 @@ public class Kicker {
 
     //Motor Variables
     private Servo kickerArm = null;
-    private DcMotor flywheel = null;
+    private DcMotorEx flywheel = null;
 
     //Servo Positions
-    private double restPos = 0.42;
-    private double shootPos = 0.64;
+    private double restPos = 0.39;
+    private double shootPos = 0.60;
     private double flywheelSpeed = 0.45;
     private final double MAX_SPEED = 1.0;
     private final double FLYWHEEL_INCREMENT = 0.05;
@@ -35,7 +37,7 @@ public class Kicker {
         telemetry = opMode.telemetry;
 
         kickerArm = hardwareMap.get(Servo.class, "KICKER");
-        flywheel = hardwareMap.get(DcMotor.class, "FLYWHEEL");
+        flywheel = hardwareMap.get(DcMotorEx.class, "FLYWHEEL");
         flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         flywheel.setPower(0.0);
         /*
@@ -82,14 +84,39 @@ public class Kicker {
     public void increaseFlywheel() {    // bumps the flywheel speed up by one increment
         if (flywheelSpeed <= MAX_SPEED - FLYWHEEL_INCREMENT)
             flywheelSpeed += FLYWHEEL_INCREMENT;
-        telemetry.addData("Flywheel speed: ", flywheelSpeed);
+        telemetry.addData("Flywheel set speed to: ", flywheelSpeed);
         telemetry.update();
     }
 
     public void decreaseFlywheel() {    // bumps the flywheel speed down by one increment
         if (flywheelSpeed >= FLYWHEEL_INCREMENT)
             flywheelSpeed -= FLYWHEEL_INCREMENT;
-        telemetry.addData("Flywheel speed: ", flywheelSpeed);
+        telemetry.addData("Flywheel set speed to: ", flywheelSpeed);
+        telemetry.update();
+    }
+    public void setFlywheelPIDF(){
+        PIDFCoefficients pidfCoefficients;
+
+        pidfCoefficients = flywheel.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+        // This is where we would change individual PIDF coefficients, if desired
+//        pidfCoefficients.p = 10.0;
+//        pidfCoefficients.i = 3.0;
+//        pidfCoefficients.d = 0.0;
+//        pidfCoefficients.f = 0.0;
+        flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        // Report final PIDF coefficients - expected to show immediately after "play"
+        telemetry.addData("flywheel P = ", pidfCoefficients.p);
+        telemetry.addData("flywheel I = ", pidfCoefficients.i);
+        telemetry.addData("flywheel D = ", pidfCoefficients.d);
+        telemetry.addData("flywheel F = ", pidfCoefficients.f);
+        telemetry.update();
+    }
+
+    public void reportFlywheelVelocity(){
+        double velocity;
+
+        velocity = flywheel.getVelocity();
+        telemetry.addData("flywheel actual velocity (ticks/sec) = ", velocity);
         telemetry.update();
     }
 }
