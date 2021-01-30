@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Path;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -14,6 +16,11 @@ import com.qualcomm.robotcore.util.Range;
 
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 // We made it a class so it was easier to do different motions Ex. driving, straffing, turning, braking
 /*
@@ -47,6 +54,12 @@ public class DriveTrain {
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 0.5;
     static final double     TURN_SPEED              = 0.5;
+    static final float K_PROP = 0.05f;
+    // The IMU sensor object
+    BNO055IMU imu;
+    // State used for updating telemetry
+    Orientation angles;
+
 
     //Declaring motors
     private DcMotor leftFront = null;
@@ -56,6 +69,22 @@ public class DriveTrain {
     public DriveTrain(OpMode opMode){
         hardwareMap = opMode.hardwareMap;
         telemetry = opMode.telemetry;
+            // Set up the parameters with which we will use our IMU. Note that integration
+            // algorithm here just reports accelerations to the logcat log; it doesn't actually
+            // provide positional information.
+            BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+            parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+            parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+            parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+            parameters.loggingEnabled      = true;
+            parameters.loggingTag          = "IMU";
+            parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+            // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
+            // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+            // and named "imu".
+            imu = hardwareMap.get(BNO055IMU.class, "imu");
+            imu.initialize(parameters);
 
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
@@ -97,6 +126,11 @@ public class DriveTrain {
         int rightRearTarget;
         int leftFrontTarget;
         int rightFrontTarget;
+        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        float error;
+        float targetAngle;
+        targetAngle = angles.firstAngle;
+        double rotVal;
 
         // defined target variables
         leftFrontTarget = leftFront.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
@@ -128,6 +162,19 @@ public class DriveTrain {
         // However, if you require that ALL motors have finished their moves before the robot continues
         // onto the next step, use (isBusy() || isBusy()) in the loop test.
         while (leftFront.isBusy() && rightFront.isBusy() && leftRear.isBusy() && rightRear.isBusy()) {
+            angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+           error = angles.firstAngle - targetAngle;
+
+            // fix the angleError so it doesn't go past 180 degrees
+            if (Math.abs(error) > 180.0) {
+                error = -Math.copySign(360.0f - Math.abs(error), error);
+            }
+            rotVal = error * K_PROP;
+
+            leftFront.setPower (speed + rotVal);
+            leftRear.setPower (speed + rotVal);
+            rightFront.setPower (speed - rotVal);
+            rightRear.setPower (speed - rotVal);
 
         }
         // stops the robot
