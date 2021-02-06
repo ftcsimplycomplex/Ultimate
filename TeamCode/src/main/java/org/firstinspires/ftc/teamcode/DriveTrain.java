@@ -309,9 +309,9 @@ public class DriveTrain {
             }
             rotVal = error * K_PROP;
 
-            leftFront.setPower (speed - rotVal);
+            leftFront.setPower (speed + rotVal);
             leftRear.setPower (speed + rotVal);
-            rightFront.setPower (speed + rotVal);
+            rightFront.setPower (speed - rotVal);
             rightRear.setPower (speed - rotVal);
 
         }
