@@ -123,23 +123,23 @@ public class AutonPrototype extends LinearOpMode {
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         driveTrain.tankDrive(DRIVE_SPEED, -1, -1);
-        driveTrain.straffe(8,DRIVE_SPEED);
+        driveTrain.straffe(10,DRIVE_SPEED);
         kicker.flywheel();
         driveTrain.tankDrive(DRIVE_SPEED, -55, -55);
         kicker.shoot();
-        sleep(200);
+        sleep(150);
         kicker.rest();
         sleep(2500);
         kicker.shoot();
-        sleep(200);
+        sleep(150);
         kicker.rest();
         sleep(2500);
         kicker.shoot();
-        sleep(200);
+        sleep(150);
         kicker.rest();
         sleep( 2500);
         kicker.shoot();
-        sleep(200);
+        sleep(150);
         kicker.rest();
         kicker.stopFlywheel();
 
@@ -173,8 +173,8 @@ public class AutonPrototype extends LinearOpMode {
         driveTrain.tankDrive(DRIVE_SPEED,  -14.0,  -14.0); // S5: Back up to Launch Line
     }
     public void WobbleB(){
-        driveTrain.tankDrive(DRIVE_SPEED,-27,-29);  // S1: Forward to zone B
-        driveTrain.straffe(-8, 0.5);
+        driveTrain.tankDrive(DRIVE_SPEED,-21,-21);  // S1: Forward to zone B
+        driveTrain.straffe(-2, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
@@ -186,8 +186,8 @@ public class AutonPrototype extends LinearOpMode {
         driveTrain.tankDrive(DRIVE_SPEED,  9,  9); // S5: Back up to Launch Line
     }
     public void WobbleC(){
-        driveTrain.tankDrive(DRIVE_SPEED,  -53,  -53);  // S1: Forward to zone C
-        driveTrain.straffe(-35.0, 0.5);
+        driveTrain.tankDrive(DRIVE_SPEED,  -44,  -44);  // S1: Forward to zone C
+        driveTrain.straffe(-27.0, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
@@ -196,7 +196,7 @@ public class AutonPrototype extends LinearOpMode {
         sleep(1100);     // pause for servos to move
         wobbleGoal.parkArm(); // S5: Raise arm
         sleep(1200);     // pause for servos to move
-        driveTrain.tankDrive(DRIVE_SPEED,  33.0,  33.0); // S5: Back up to Launch Line
+        driveTrain.tankDrive(DRIVE_SPEED,  35.0,  35.0); // S5: Back up to Launch Line
     }
 }
 

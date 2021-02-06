@@ -171,10 +171,10 @@ public class DriveTrain {
             }
             rotVal = error * K_PROP;
 
-            leftFront.setPower (speed + rotVal);
-            leftRear.setPower (speed + rotVal);
-            rightFront.setPower (speed - rotVal);
-            rightRear.setPower (speed - rotVal);
+            leftFront.setPower (Math.copySign(Math.abs(speed) - rotVal, rightInches));
+            leftRear.setPower (Math.copySign(Math.abs(speed) - rotVal, rightInches));
+            rightFront.setPower (Math.copySign(Math.abs(speed) + rotVal, rightInches));
+            rightRear.setPower (Math.copySign(Math.abs(speed) + rotVal, rightInches));
 
         }
         // stops the robot
@@ -309,10 +309,10 @@ public class DriveTrain {
             }
             rotVal = error * K_PROP;
 
-            leftFront.setPower (speed + rotVal);
-            leftRear.setPower (speed + rotVal);
-            rightFront.setPower (speed - rotVal);
-            rightRear.setPower (speed - rotVal);
+            leftFront.setPower (Math.copySign(Math.abs(speed) - rotVal, horizontalInches));
+            leftRear.setPower (Math.copySign(Math.abs(speed) - rotVal, horizontalInches));
+            rightFront.setPower (Math.copySign(Math.abs(speed) + rotVal, horizontalInches));
+            rightRear.setPower (Math.copySign(Math.abs(speed) + rotVal, horizontalInches));
 
         }
 
