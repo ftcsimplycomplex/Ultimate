@@ -263,6 +263,11 @@ public class DriveTrain {
         int rightRearTarget;
         int leftFrontTarget;
         int rightFrontTarget;
+        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        float error;
+        float targetAngle;
+        targetAngle = angles.firstAngle;
+        double rotVal;
 
         // defined target variables
         // had diagonals go the same direction - 2 positive, 2 negative
@@ -295,6 +300,19 @@ public class DriveTrain {
         // However, if you require that ALL motors have finished their moves before the robot continues
         // onto the next step, use (isBusy() || isBusy()) in the loop test.
         while (leftFront.isBusy() && rightFront.isBusy() && leftRear.isBusy() && rightRear.isBusy()) {
+            angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            error = angles.firstAngle - targetAngle;
+
+            // fix the angleError so it doesn't go past 180 degrees
+            if (Math.abs(error) > 180.0) {
+                error = -Math.copySign(360.0f - Math.abs(error), error);
+            }
+            rotVal = error * K_PROP;
+
+            leftFront.setPower (speed - rotVal);
+            leftRear.setPower (speed + rotVal);
+            rightFront.setPower (speed + rotVal);
+            rightRear.setPower (speed - rotVal);
 
         }
 
