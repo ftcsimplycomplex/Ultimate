@@ -89,6 +89,7 @@ public class StrafeTest extends LinearOpMode {
         waitForStart();
 
         driveTrain.straffe(-72.0,0.5);
+        driveTrain.straffe(72.0,0.5);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

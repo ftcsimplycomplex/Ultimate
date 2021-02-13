@@ -54,7 +54,9 @@ public class DriveTrain {
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 0.5;
     static final double     TURN_SPEED              = 0.5;
-    static final float K_PROP = 0.05f;
+    static final float K_PROP_TD = 0.05f;
+    static final float K_PROP_S = 0.035f;
+
     // The IMU sensor object
     BNO055IMU imu;
     // State used for updating telemetry
@@ -130,7 +132,7 @@ public class DriveTrain {
         float error;
         float targetAngle;
         targetAngle = angles.firstAngle;
-        double rotVal;
+        double rotVal = 0;
 
         // defined target variables
         leftFrontTarget = leftFront.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
@@ -169,12 +171,16 @@ public class DriveTrain {
             if (Math.abs(error) > 180.0) {
                 error = -Math.copySign(360.0f - Math.abs(error), error);
             }
-            rotVal = error * K_PROP;
+            rotVal = error * K_PROP_TD;
 
-            leftFront.setPower (Math.copySign(Math.abs(speed) - rotVal, rightInches));
-            leftRear.setPower (Math.copySign(Math.abs(speed) - rotVal, rightInches));
-            rightFront.setPower (Math.copySign(Math.abs(speed) + rotVal, rightInches));
-            rightRear.setPower (Math.copySign(Math.abs(speed) + rotVal, rightInches));
+            if (rightInches < 0) { //This makes the robot's error negative when driving backwards
+                rotVal = rotVal * (-1);
+            }
+
+            leftFront.setPower (speed + rotVal);
+            leftRear.setPower (speed + rotVal);
+            rightFront.setPower (speed - rotVal);
+            rightRear.setPower (speed - rotVal);
 
         }
         // stops the robot
@@ -267,7 +273,7 @@ public class DriveTrain {
         float error;
         float targetAngle;
         targetAngle = angles.firstAngle;
-        double rotVal;
+        double rotVal = 0;
 
         // defined target variables
         // had diagonals go the same direction - 2 positive, 2 negative
@@ -307,12 +313,17 @@ public class DriveTrain {
             if (Math.abs(error) > 180.0) {
                 error = -Math.copySign(360.0f - Math.abs(error), error);
             }
-            rotVal = error * K_PROP;
 
-            leftFront.setPower (Math.copySign(Math.abs(speed) - rotVal, horizontalInches));
-            leftRear.setPower (Math.copySign(Math.abs(speed) - rotVal, horizontalInches));
-            rightFront.setPower (Math.copySign(Math.abs(speed) + rotVal, horizontalInches));
-            rightRear.setPower (Math.copySign(Math.abs(speed) + rotVal, horizontalInches));
+            rotVal = error * K_PROP_S;
+
+            if (horizontalInches < 0) { //This makes the robot's error negative when driving backwards
+                rotVal = rotVal * (-1);
+            }
+
+            leftFront.setPower (speed + rotVal);
+            leftRear.setPower (speed + rotVal);
+            rightFront.setPower (speed - rotVal);
+            rightRear.setPower (speed - rotVal);
 
         }
 
