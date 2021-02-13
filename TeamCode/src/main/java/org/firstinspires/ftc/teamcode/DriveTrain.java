@@ -198,6 +198,12 @@ public class DriveTrain {
     }
     public void rotate(int degrees, double speed){
 
+        angles= imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        float error;
+        float targetAngle;
+        targetAngle = angles.firstAngle;
+        double rotVal = 0;
+
         // set correct modes for motors
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -241,10 +247,33 @@ public class DriveTrain {
         // However, if you require that ALL motors have finished their moves before the robot continues
         // onto the next step, use (isBusy() || isBusy()) in the loop test.
         while (leftFront.isBusy() && rightFront.isBusy() && leftRear.isBusy() && rightRear.isBusy()) {
-
         }
 
         // robot stopped
+        leftFront.setPower(0.0);
+        leftRear.setPower(0.0);
+        rightFront.setPower(0.0);
+        rightRear.setPower(0.0);
+
+        error = angles.firstAngle-targetAngle;
+
+        if (Math.abs(error) > 180.0) {
+            error = -Math.copySign(360.0f - Math.abs(error), error);
+        }
+
+        while (Math.abs(error) <1) {
+            if (error > 0) {
+                leftFront.setPower(-speed);
+                leftRear.setPower(-speed);
+                rightFront.setPower(speed);
+                rightRear.setPower(speed);
+            } else {
+                leftFront.setPower(speed);
+                leftRear.setPower(speed);
+                rightFront.setPower(-speed);
+                rightRear.setPower(-speed);
+            }
+        }
         leftFront.setPower(0.0);
         leftRear.setPower(0.0);
         rightFront.setPower(0.0);
