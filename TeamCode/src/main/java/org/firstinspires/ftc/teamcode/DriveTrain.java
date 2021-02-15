@@ -56,6 +56,7 @@ public class DriveTrain {
     static final double     TURN_SPEED              = 0.5;
     static final float K_PROP_TD = 0.05f;
     static final float K_PROP_S = 0.035f;
+    static final float K_PROP_R = 0.005f;
 
     // The IMU sensor object
     BNO055IMU imu;
@@ -211,7 +212,7 @@ public class DriveTrain {
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // created targets
-        int leftRearTarget;
+       /* int leftRearTarget;
         int rightRearTarget;
         int leftFrontTarget;
         int rightFrontTarget;
@@ -247,13 +248,9 @@ public class DriveTrain {
         // However, if you require that ALL motors have finished their moves before the robot continues
         // onto the next step, use (isBusy() || isBusy()) in the loop test.
         while (leftFront.isBusy() && rightFront.isBusy() && leftRear.isBusy() && rightRear.isBusy()) {
-        }
+        }*/
 
-        // robot stopped
-        leftFront.setPower(0.0);
-        leftRear.setPower(0.0);
-        rightFront.setPower(0.0);
-        rightRear.setPower(0.0);
+
 
         error = angles.firstAngle-targetAngle;
 
@@ -262,16 +259,19 @@ public class DriveTrain {
         }
 
         while (Math.abs(error) <1) {
+            rotVal = error * K_PROP_R;
+
+
             if (error > 0) {
-                leftFront.setPower(-speed);
-                leftRear.setPower(-speed);
-                rightFront.setPower(speed);
-                rightRear.setPower(speed);
+                leftFront.setPower(-speed + rotVal);
+                leftRear.setPower(-speed + rotVal);
+                rightFront.setPower(speed - rotVal);
+                rightRear.setPower(speed - rotVal);
             } else {
-                leftFront.setPower(speed);
-                leftRear.setPower(speed);
-                rightFront.setPower(-speed);
-                rightRear.setPower(-speed);
+                leftFront.setPower(speed + rotVal);
+                leftRear.setPower(speed + rotVal);
+                rightFront.setPower(-speed - rotVal);
+                rightRear.setPower(-speed - rotVal);
             }
         }
         leftFront.setPower(0.0);
