@@ -90,8 +90,8 @@ public class ForwardTest extends LinearOpMode {
 
         waitForStart();
 
-        driveTrain.tankDrive(0.5, 72.0,72.0);
-        driveTrain.tankDrive(0.5, -72.0,-72.0);
+        driveTrain.controlledTankDrive(0.5, 72.0,72.0);
+        driveTrain.controlledTankDrive(0.5, -72.0,-72.0);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

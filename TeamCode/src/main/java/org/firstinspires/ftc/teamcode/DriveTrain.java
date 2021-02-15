@@ -261,7 +261,7 @@ public class DriveTrain {
             error = -Math.copySign(360.0f - Math.abs(error), error);
         }
 
-        while (Math.abs(error) <1) {
+        while (Math.abs(error) > 1) {
             rotVal = error * K_PROP_R;
 
 
