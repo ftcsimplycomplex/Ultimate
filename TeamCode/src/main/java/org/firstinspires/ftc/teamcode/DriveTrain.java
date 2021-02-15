@@ -262,7 +262,7 @@ public class DriveTrain {
         }
 
         while (Math.abs(error) > 1) {
-            rotVal = error * K_PROP_R;
+            rotVal = (targetAngle-error) * K_PROP_R;
 
 
             if (error > 0) {
