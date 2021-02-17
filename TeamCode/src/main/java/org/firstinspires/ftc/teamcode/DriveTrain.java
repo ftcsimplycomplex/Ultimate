@@ -56,7 +56,7 @@ public class DriveTrain {
     static final double     TURN_SPEED              = 0.5;
     static final float K_PROP_TD = 0.05f;
     static final float K_PROP_S = 0.035f;
-    static final float K_PROP_R = 0.005f;
+    static final float K_PROP_R = (1.0f/360.0f);
 
     // The IMU sensor object
     BNO055IMU imu;
@@ -200,12 +200,19 @@ public class DriveTrain {
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
-    public void rotate(int degrees, double speed){
+    public void rotate(float degrees, double speed){
 
         angles= imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         float error;
         float targetAngle;
         targetAngle = angles.firstAngle + degrees;
+
+        error = angles.firstAngle-targetAngle;
+
+        if (Math.abs(error) > 180.0) {
+            error = -Math.copySign(360.0f - Math.abs(error), error);
+        }
+
         double rotVal = 0;
 
         // set correct modes for motors
@@ -254,29 +261,30 @@ public class DriveTrain {
         }*/
 
 
+        while (Math.abs(error) > 1){
 
-        error = angles.firstAngle-targetAngle;
+            angles= imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            error = angles.firstAngle-targetAngle;
 
-        if (Math.abs(error) > 180.0) {
-            error = -Math.copySign(360.0f - Math.abs(error), error);
-        }
+            if (Math.abs(error) > 180.0) {
+                error = -Math.copySign(360.0f - Math.abs(error), error);
+            }
 
-        while (Math.abs(error) > 1) {
-            rotVal = (targetAngle-error) * K_PROP_R;
+            rotVal = Math.abs(error * K_PROP_R);
 
-
-            if (error > 0) {
-                leftFront.setPower(-speed + rotVal);
-                leftRear.setPower(-speed + rotVal);
-                rightFront.setPower(speed - rotVal);
-                rightRear.setPower(speed - rotVal);
+            if (error < 0) {
+                leftFront.setPower( - (rotVal + speed));
+                leftRear.setPower( - (rotVal + speed));
+                rightFront.setPower( + rotVal + speed);
+                rightRear.setPower( + rotVal + speed);
             } else {
-                leftFront.setPower(speed + rotVal);
-                leftRear.setPower(speed + rotVal);
-                rightFront.setPower(-speed - rotVal);
-                rightRear.setPower(-speed - rotVal);
+                leftFront.setPower( + rotVal + speed);
+                leftRear.setPower( + rotVal + speed);
+                rightFront.setPower( - (rotVal + speed));
+                rightRear.setPower( - (rotVal + speed));
             }
         }
+
         leftFront.setPower(0.0);
         leftRear.setPower(0.0);
         rightFront.setPower(0.0);
@@ -435,7 +443,7 @@ public class DriveTrain {
 
             double percentage = ((leftFront.getCurrentPosition() + rightFront.getCurrentPosition() + rightRear.getCurrentPosition() + leftRear.getCurrentPosition())/(4 * leftFrontTarget)) * 100;
 
-            if (percentage < 5 || percentage < 95) {
+            if (percentage < 5 || percentage > 95) {
                 leftFront.setPower ((speed + rotVal) * 0.5);
                 leftRear.setPower ((speed + rotVal) * 0.5);
                 rightFront.setPower ((speed - rotVal) * 0.5);
