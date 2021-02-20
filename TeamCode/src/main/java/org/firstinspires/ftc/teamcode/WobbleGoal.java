@@ -31,7 +31,7 @@ public class WobbleGoal {
     private double GRAB_GOAL_POS = 0.03;    //Reference engineering notebook for numbers 11/25/2020
 */
     private double PARK_ARM_POS = 0.61;     // Revised 10-JAN-2021 by JL & KER
-    private double LIFT_ARM_POS = 0.49;     // Revised 10-JAN-2021 by JL & KER
+    private double LIFT_ARM_POS = 0.52;     // Revised 20-FEB-2021 by EB & programmers 18061 B)
     private double GRAB_GOAL_POS = 0.435;   // Revised 10-JAN-2021 by JL & KER
 
     private double DROP_RINGS_POS = 0.08;

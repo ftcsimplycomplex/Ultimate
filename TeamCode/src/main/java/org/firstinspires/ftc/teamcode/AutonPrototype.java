@@ -125,7 +125,8 @@ public class AutonPrototype extends LinearOpMode {
         driveTrain.tankDrive(DRIVE_SPEED, -1, -1);
         driveTrain.straffe(10,DRIVE_SPEED);
         kicker.flywheel();
-        driveTrain.tankDrive(DRIVE_SPEED, -55, -55);
+        driveTrain.tankDrive(DRIVE_SPEED, -50, -50);
+        sleep(300);
         kicker.shoot();
         sleep(150);
         kicker.rest();
@@ -143,6 +144,7 @@ public class AutonPrototype extends LinearOpMode {
         kicker.rest();
         kicker.stopFlywheel();
 
+        driveTrain.tankDrive(DRIVE_SPEED, -5, -5);
 
         if(ringPosition.equals("A")){
             WobbleA();
@@ -153,7 +155,7 @@ public class AutonPrototype extends LinearOpMode {
         }
 
 
-        driveTrain.rotate(180, 0.5);
+        driveTrain.rotate(170, 0.5);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();

@@ -190,8 +190,9 @@ public class DriveTrain {
         rightFront.setPower(0.0);
         rightRear.setPower(0.0);
 
+        angles= imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         error = angles.firstAngle - targetAngle;
-        rotate (Math.round(-error), speed);
+        rotate (-error, speed);
 
         // resets the mode
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -373,6 +374,10 @@ public class DriveTrain {
         rightFront.setPower(0.0);
         rightRear.setPower(0.0);
 
+        angles= imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        error = angles.firstAngle - targetAngle;
+        rotate (-error, speed);
+
         // reset mode
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -441,7 +446,8 @@ public class DriveTrain {
             }
 
 
-            double percentage = ((leftFront.getCurrentPosition() + rightFront.getCurrentPosition() + rightRear.getCurrentPosition() + leftRear.getCurrentPosition())/(4 * leftFrontTarget)) * 100;
+            double percentage = ((leftFront.getCurrentPosition() + rightFront.getCurrentPosition() +
+                    rightRear.getCurrentPosition() + leftRear.getCurrentPosition())/(4 * leftFrontTarget)) * 100;
 
             if (percentage < 5 || percentage > 95) {
                 leftFront.setPower ((speed + rotVal) * 0.5);
