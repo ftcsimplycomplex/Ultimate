@@ -77,8 +77,7 @@ public class ForwardTest extends LinearOpMode {
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 0.5;
     static final double     TURN_SPEED              = 0.5;
-
-
+    float initialAngle, currentAngle, error ;
 
 
     public DriveTrain driveTrain;
@@ -89,10 +88,18 @@ public class ForwardTest extends LinearOpMode {
         driveTrain = new DriveTrain (this);
 
         waitForStart();
-
-        driveTrain.controlledTankDrive(0.5, 72.0,72.0);
-        driveTrain.controlledTankDrive(0.5, -72.0,-72.0);
-
+        initialAngle = driveTrain.readAngle();
+        driveTrain.controlledTankDrive(0.75, 72.0,72.0);
+        sleep(2000);
+        currentAngle = driveTrain.readAngle();
+        error = currentAngle - initialAngle;
+        driveTrain.rotate(-error, 0.1);
+        sleep(2000);
+        driveTrain.controlledTankDrive(0.75, -72.0,-72.0);
+        sleep(2000);
+        currentAngle = driveTrain.readAngle();
+        error = currentAngle - initialAngle;
+        driveTrain.rotate(-error, 0.1);
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }

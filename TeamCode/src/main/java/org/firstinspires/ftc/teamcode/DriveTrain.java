@@ -22,6 +22,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
+import static java.lang.Thread.sleep;
+
 // We made it a class so it was easier to do different motions Ex. driving, straffing, turning, braking
 /*
  Instructions:
@@ -401,9 +403,14 @@ public class DriveTrain {
         float targetAngle;
         targetAngle = angles.firstAngle;
         double rotVal = 0;
+        int initialPos;
+        int progress;
+        int totalTicks;
+
+        initialPos = leftFront.getCurrentPosition();
 
         // defined target variables
-        leftFrontTarget = leftFront.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+        leftFrontTarget = initialPos + (int)(leftInches * COUNTS_PER_INCH);
         rightFrontTarget = rightFront.getCurrentPosition() +(int)(rightInches * COUNTS_PER_INCH);
         leftRearTarget = leftRear.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
         rightRearTarget = rightRear.getCurrentPosition() + (int)( rightInches * COUNTS_PER_INCH);
@@ -413,6 +420,9 @@ public class DriveTrain {
         leftRear.setTargetPosition(leftRearTarget);
         rightRear.setTargetPosition(rightRearTarget);
 
+        totalTicks = Math.abs(leftFrontTarget - initialPos);
+        progress = 0;
+
         // Turn On RUN_TO_POSITION
         leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -420,10 +430,10 @@ public class DriveTrain {
         rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // reset the timeout time and start motion.
-        leftFront.setPower(Range.clip(Math.abs(speed),-1,1));
-        rightFront.setPower(Range.clip(Math.abs(speed),-1,1));
-        leftRear.setPower(Range.clip(Math.abs(speed),-1,1));
-        rightRear.setPower(Range.clip(Math.abs(speed),-1,1));
+        leftFront.setPower(Range.clip(Math.abs(speed * 0.5),-1,1));
+        rightFront.setPower(Range.clip(Math.abs(speed * 0.5),-1,1));
+        leftRear.setPower(Range.clip(Math.abs(speed * 0.5),-1,1));
+        rightRear.setPower(Range.clip(Math.abs(speed * 0.5),-1,1));
 
         // keep looping while we are still active, and there is time left, and all 4 motors are running.
         // Note: We use (isBusy() && isBusy()) in the loop test, which means that when any of the motors hits
@@ -446,10 +456,13 @@ public class DriveTrain {
             }
 
 
-            double percentage = ((leftFront.getCurrentPosition() + rightFront.getCurrentPosition() +
-                    rightRear.getCurrentPosition() + leftRear.getCurrentPosition())/(4 * leftFrontTarget)) * 100;
+       //     double percentage = ((leftFront.getCurrentPosition() + rightFront.getCurrentPosition() +
+              //      rightRear.getCurrentPosition() + leftRear.getCurrentPosition())/(4 * leftFrontTarget)) * 100;
 
-            if (percentage < 5 || percentage > 95) {
+            progress = Math.abs(leftFront.getCurrentPosition() - initialPos);
+            double percentage = (progress * 100.0)/totalTicks;
+
+            if (percentage < 5.0 || percentage > 95.0) {
                 leftFront.setPower ((speed + rotVal) * 0.5);
                 leftRear.setPower ((speed + rotVal) * 0.5);
                 rightFront.setPower ((speed - rotVal) * 0.5);
@@ -470,6 +483,7 @@ public class DriveTrain {
         rightFront.setPower(0.0);
         rightRear.setPower(0.0);
 
+        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         error = angles.firstAngle - targetAngle;
         rotate (Math.round(-error), speed);
 
@@ -479,6 +493,16 @@ public class DriveTrain {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+    }
+    public float readAngle() {
+        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return (angles.firstAngle);
+    }
+    public void fixAngle(float initialAngle){
+        float currentAngle, error ;
+        currentAngle = readAngle();
+        error = currentAngle - initialAngle;
+        rotate(-error, 0.1);
     }
 }
 
