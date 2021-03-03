@@ -162,14 +162,14 @@ public class MecanumDrive extends LinearOpMode {
                 lBumperUpGP1 = true;
             }
 
-            DriveTrain dt = new DriveTrain(null);
+            /*DriveTrain dt = new DriveTrain(null);
             if(!gamepad2.a){
                 gp1aUP = true;
             }
             if(gamepad2.a && gp1aUP){
                 dt.straffe(3,0.5);
                 gp1aUP = false;
-            }
+            }*/
 
 
             // gamepad button X - Park Arm

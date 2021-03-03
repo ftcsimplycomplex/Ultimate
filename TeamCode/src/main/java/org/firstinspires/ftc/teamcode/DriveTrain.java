@@ -388,6 +388,7 @@ public class DriveTrain {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+
     public void controlledTankDrive(double speed, double rightInches, double leftInches){
         // set motors to correct mode
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -506,5 +507,113 @@ public class DriveTrain {
         error = currentAngle - initialAngle;
         rotate(-error, 0.1);
     }
+
+    public void controlledStraffe(double horizontalInches, double speed){
+
+        // set correct modes for motors
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Created target variables
+        int leftRearTarget;
+        int rightRearTarget;
+        int leftFrontTarget;
+        int rightFrontTarget;
+        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        float error;
+        float targetAngle;
+        targetAngle = angles.firstAngle;
+        double rotVal = 0;
+        int initialPos;
+        int progress;
+        int totalTicks;
+
+        initialPos = leftFront.getCurrentPosition();
+
+
+        // defined target variables
+        // had diagonals go the same direction - 2 positive, 2 negative
+        leftFrontTarget = leftFront.getCurrentPosition() + (int)(horizontalInches*COUNTS_PER_INCH * 1.05);
+        rightFrontTarget = rightFront.getCurrentPosition() +(int)(-horizontalInches*COUNTS_PER_INCH * 1.05);
+        leftRearTarget = leftRear.getCurrentPosition() + (int)(-horizontalInches*COUNTS_PER_INCH * 1.05);
+        rightRearTarget = rightRear.getCurrentPosition() + (int)(horizontalInches*COUNTS_PER_INCH * 1.05);
+
+        leftFront.setTargetPosition(leftFrontTarget);
+        rightFront.setTargetPosition(rightFrontTarget);
+        leftRear.setTargetPosition(leftRearTarget);
+        rightRear.setTargetPosition(rightRearTarget);
+
+        totalTicks = Math.abs(leftFrontTarget - initialPos);
+        progress = 0;
+
+        // Turn On RUN_TO_POSITION
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // reset the timeout time and start motion.
+        leftFront.setPower(Range.clip(Math.abs(speed),-1,1));
+        rightFront.setPower(Range.clip(Math.abs(speed),-1,1));
+        leftRear.setPower(Range.clip(Math.abs(speed),-1,1));
+        rightRear.setPower(Range.clip(Math.abs(speed),-1,1));
+
+        // keep looping while we are still active, and there is time left, and all 4 motors are running.
+        // Note: We use (isBusy() && isBusy()) in the loop test, which means that when any of the motors hits
+        // its target position, the motion will stop.  This is "safer" in the event that the robot will
+        // always end the motion as soon as possible.
+        // However, if you require that ALL motors have finished their moves before the robot continues
+        // onto the next step, use (isBusy() || isBusy()) in the loop test.
+        while (leftFront.isBusy() && rightFront.isBusy() && leftRear.isBusy() && rightRear.isBusy()) {
+            angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            error = angles.firstAngle - targetAngle;
+
+            // fix the angleError so it doesn't go past 180 degrees
+            if (Math.abs(error) > 180.0) {
+                error = -Math.copySign(360.0f - Math.abs(error), error);
+            }
+
+            rotVal = error * K_PROP_S;
+
+            if (horizontalInches < 0) { //This makes the robot's error negative when driving backwards
+                rotVal = rotVal * (-1);
+            }
+
+            progress = Math.abs(leftFront.getCurrentPosition() - initialPos);
+            double percentage = (progress * 100.0)/totalTicks;
+
+            if (percentage < 5.0 || percentage > 95.0) {
+                leftFront.setPower ((speed + rotVal) * 0.5);
+                leftRear.setPower ((speed + rotVal) * 0.5);
+                rightFront.setPower ((speed - rotVal) * 0.5);
+                rightRear.setPower ((speed - rotVal) * 0.5);
+
+            } else {
+                leftFront.setPower (speed + rotVal);
+                leftRear.setPower (speed + rotVal);
+                rightFront.setPower (speed - rotVal);
+                rightRear.setPower (speed - rotVal);
+            }
+        }
+
+        // robot stops
+        leftFront.setPower(0.0);
+        leftRear.setPower(0.0);
+        rightFront.setPower(0.0);
+        rightRear.setPower(0.0);
+
+        angles= imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        error = angles.firstAngle - targetAngle;
+        rotate (-error, speed);
+
+        // reset mode
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
 }
 

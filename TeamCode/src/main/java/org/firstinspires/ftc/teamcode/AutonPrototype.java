@@ -182,6 +182,26 @@ public class AutonPrototype extends LinearOpMode {
         driveTrain.tankDrive(DRIVE_SPEED,  -14.0,  -14.0); // S5: Back up to Launch Line
     }
     public void WobbleB(){
+        kicker.startIntake();
+        driveTrain.controlledStraffe(-12,0.5);
+        sleep(300);
+        driveTrain.fixAngle(initialAngle);
+        driveTrain.tankDrive(0.4,18,18);
+        sleep(400);
+        driveTrain.tankDrive(0.4,-18,-18);
+        kicker.flywheel();
+        driveTrain.controlledStraffe(12,0.5);
+        sleep(300);
+        driveTrain.fixAngle(initialAngle);
+        kicker.stopIntake();
+        kicker.shoot();
+        sleep(150);
+        kicker.rest();
+        sleep(200);
+        kicker.shoot();
+        sleep(150);
+        kicker.rest();
+        kicker.stopFlywheel();
         driveTrain.controlledTankDrive(DRIVE_SPEED,-21,-21);  // S1: Forward to zone B
         driveTrain.straffe(-2, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal

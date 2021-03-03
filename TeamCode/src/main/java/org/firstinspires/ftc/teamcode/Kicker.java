@@ -23,6 +23,8 @@ public class Kicker {
     //Motor Variables
     private Servo kickerArm = null;
     private DcMotorEx flywheel = null;
+    private DcMotor frontMotor;
+    private DcMotor backMotor;
 
     //Servo Positions
     private double restPos = 0.39;
@@ -38,6 +40,8 @@ public class Kicker {
 
         kickerArm = hardwareMap.get(Servo.class, "KICKER");
         flywheel = hardwareMap.get(DcMotorEx.class, "FLYWHEEL");
+        frontMotor = hardwareMap.get(DcMotor.class, "GECKO"); //Front intake motor
+        backMotor = hardwareMap.get(DcMotor.class, "COMPLIANT"); //Back intake motor
         flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         flywheel.setPower(0.0);
         /*
@@ -118,5 +122,15 @@ public class Kicker {
         velocity = flywheel.getVelocity();
         telemetry.addData("flywheel actual velocity (ticks/sec) = ", velocity);
         telemetry.update();
+    }
+
+    public void startIntake(){
+        frontMotor.setPower(1);
+        backMotor.setPower(1);
+    }
+
+    public void stopIntake(){
+        frontMotor.setPower(0);
+        backMotor.setPower(0);
     }
 }
