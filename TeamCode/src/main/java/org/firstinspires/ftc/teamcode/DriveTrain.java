@@ -46,6 +46,7 @@ import static java.lang.Thread.sleep;
    ALL of these other then stop() work using encoders
 */
 public class DriveTrain {
+
     private OpMode opMode;
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
@@ -71,6 +72,7 @@ public class DriveTrain {
     private DcMotor rightFront = null;
     private DcMotor leftRear = null;
     private DcMotor rightRear = null;
+
     public DriveTrain(OpMode opMode){
         hardwareMap = opMode.hardwareMap;
         telemetry = opMode.telemetry;
@@ -205,7 +207,7 @@ public class DriveTrain {
     }
     public void rotate(float degrees, double speed){
 
-        angles= imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         float error;
         float targetAngle;
         targetAngle = angles.firstAngle + degrees;
