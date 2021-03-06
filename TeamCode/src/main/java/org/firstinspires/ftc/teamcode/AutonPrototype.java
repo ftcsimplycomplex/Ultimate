@@ -126,14 +126,14 @@ public class AutonPrototype extends LinearOpMode {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         initialAngle = driveTrain.readAngle();
         driveTrain.tankDrive(DRIVE_SPEED, -1, -1);
-        driveTrain.straffe(10,DRIVE_SPEED);
+        driveTrain.controlledStraffe(10, DRIVE_SPEED);
         sleep(300);
         driveTrain.fixAngle(initialAngle);
         kicker.flywheel();
         driveTrain.controlledTankDrive(DRIVE_SPEED, -50, -50);
         sleep(300);
         driveTrain.fixAngle(initialAngle);
-        sleep(100);
+        sleep(300);
         kicker.shoot();
         sleep(150);
         kicker.rest();
@@ -184,16 +184,17 @@ public class AutonPrototype extends LinearOpMode {
     public void WobbleB(){
         kicker.startIntake();
         driveTrain.controlledStraffe(-12,0.5);
-        sleep(300);
+        sleep(500);
         driveTrain.fixAngle(initialAngle);
         driveTrain.tankDrive(0.4,18,18);
-        sleep(400);
+        sleep(1000);
         driveTrain.tankDrive(0.4,-18,-18);
         kicker.flywheel();
         driveTrain.controlledStraffe(12,0.5);
+        kicker.stopIntake();
         sleep(300);
         driveTrain.fixAngle(initialAngle);
-        kicker.stopIntake();
+        sleep(300);
         kicker.shoot();
         sleep(150);
         kicker.rest();
