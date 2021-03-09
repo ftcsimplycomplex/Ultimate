@@ -126,14 +126,14 @@ public class AutonPrototype extends LinearOpMode {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         initialAngle = driveTrain.readAngle();
         driveTrain.tankDrive(DRIVE_SPEED, -1, -1);
-        driveTrain.controlledStraffe(10, DRIVE_SPEED);
+        driveTrain.controlledStraffe(12, DRIVE_SPEED); // Initial straffe
         sleep(300);
         driveTrain.fixAngle(initialAngle);
         kicker.flywheel();
-        driveTrain.controlledTankDrive(DRIVE_SPEED, -50, -50);
+        driveTrain.controlledTankDrive(DRIVE_SPEED, -50, -50); // Shooting pos
         sleep(300);
         driveTrain.fixAngle(initialAngle);
-        sleep(300);
+        sleep(300); // Start shooting preloaded rings
         kicker.shoot();
         sleep(150);
         kicker.rest();
@@ -183,7 +183,7 @@ public class AutonPrototype extends LinearOpMode {
     }
     public void WobbleB(){
         kicker.startIntake();
-        driveTrain.controlledStraffe(-12,0.5);
+        driveTrain.controlledStraffe(-14,0.5);
         sleep(500);
         driveTrain.fixAngle(initialAngle);
         driveTrain.tankDrive(0.4,18,18);
@@ -216,17 +216,58 @@ public class AutonPrototype extends LinearOpMode {
         driveTrain.tankDrive(DRIVE_SPEED,  9,  9); // S5: Back up to Launch Line
     }
     public void WobbleC(){
-        driveTrain.controlledTankDrive(DRIVE_SPEED,  -44,  -44);  // S1: Forward to zone C
-        driveTrain.straffe(-27.0, 0.5);
+        driveTrain.controlledStraffe(-14,0.5);
+        sleep(500);
+        driveTrain.fixAngle(initialAngle);
+        driveTrain.tankDrive(0.76,16,16); // Knocks over starter stack
+        sleep(500);
+        driveTrain.fixAngle(initialAngle);
+        driveTrain.tankDrive(0.76,-9,-9); // Backs up from starter stack
+        kicker.startIntake();
+        driveTrain.tankDrive(0.3, 15, 15); // Intakes starter stack
+        sleep(500);
+        driveTrain.controlledTankDrive(0.76, -22, -22); // Backs up from starter stack
+        kicker.flywheel();
+        driveTrain.controlledStraffe(12,0.5); // Moves to shooting pos
+        sleep(300);
+        kicker.stopIntake();
+        driveTrain.fixAngle(initialAngle);
+        sleep(300); // Starter Stack shooting
+        kicker.shoot();
+        sleep(150);
+        kicker.rest();
+        sleep(200);
+        kicker.shoot();
+        sleep(150);
+        kicker.rest();
+        sleep(200);
+        kicker.shoot();
+        sleep(150);
+        kicker.rest();
+        sleep(200);
+        kicker.shoot();
+        sleep(150);
+        kicker.rest();
+        sleep(200);
+        kicker.shoot();
+        sleep(150);
+        kicker.rest();
+        sleep(200);
+        kicker.shoot();
+        sleep(150);
+        kicker.rest();
+        kicker.stopFlywheel(); // After shooting start stack
+        driveTrain.controlledTankDrive(1.0,  -44,  -44);  // S1: Forward to zone C
+        driveTrain.straffe(-27.0, 0.76);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
-        sleep(1200); //pause for servos to move
+        sleep(760); //pause for servos to move
         driveTrain.straffe(2.0,0.2); //S4: Strafe to the left 2 inches
-        sleep(1100);     // pause for servos to move
+        //sleep(1100);     // pause for servos to move
         wobbleGoal.parkArm(); // S5: Raise arm
-        sleep(1200);     // pause for servos to move
-        driveTrain.controlledTankDrive(DRIVE_SPEED,  35.0,  35.0); // S5: Back up to Launch Line
+        //sleep(1200);     // pause for servos to move
+        driveTrain.controlledTankDrive(1.0,  35.0,  35.0); // S5: Back up to Launch Line
     }
 }
 
