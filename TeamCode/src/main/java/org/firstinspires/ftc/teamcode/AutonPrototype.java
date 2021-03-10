@@ -1,3 +1,4 @@
+
 /* Copyright (c) 2017 FIRST. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
@@ -198,7 +199,7 @@ public class AutonPrototype extends LinearOpMode {
         kicker.shoot();
         sleep(150);
         kicker.rest();
-        sleep(200);
+        sleep(300);
         kicker.shoot();
         sleep(150);
         kicker.rest();
