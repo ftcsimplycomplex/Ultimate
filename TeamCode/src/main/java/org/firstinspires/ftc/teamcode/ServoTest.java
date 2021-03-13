@@ -56,7 +56,7 @@ public class ServoTest extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        RightIntake = hardwareMap.get(Servo.class, "DROP");
+        RightIntake = hardwareMap.get(Servo.class, "ARM");
        LeftIntake = hardwareMap.get(Servo.class, "CLAW");
 
         telemetry.addLine("Servos mapped");
