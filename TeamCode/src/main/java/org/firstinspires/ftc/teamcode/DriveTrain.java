@@ -505,10 +505,10 @@ public class DriveTrain {
         float currentAngle, error ;
         currentAngle = readAngle();
         error = currentAngle - initialAngle;
-        rotate(-error, 0.1);
+        rotate(-error, 0.5);
     }
 
-    public void controlledStraffe(double horizontalInches, double speed){
+    public void controlledStraffe(double horizontalInches, double speed) {
 
         // set correct modes for motors
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -521,7 +521,7 @@ public class DriveTrain {
         int rightRearTarget;
         int leftFrontTarget;
         int rightFrontTarget;
-        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         float error;
         float targetAngle;
         targetAngle = angles.firstAngle;
@@ -535,10 +535,10 @@ public class DriveTrain {
 
         // defined target variables
         // had diagonals go the same direction - 2 positive, 2 negative
-        leftFrontTarget = leftFront.getCurrentPosition() + (int)(horizontalInches*COUNTS_PER_INCH * 1.05);
-        rightFrontTarget = rightFront.getCurrentPosition() +(int)(-horizontalInches*COUNTS_PER_INCH * 1.05);
-        leftRearTarget = leftRear.getCurrentPosition() + (int)(-horizontalInches*COUNTS_PER_INCH * 1.05);
-        rightRearTarget = rightRear.getCurrentPosition() + (int)(horizontalInches*COUNTS_PER_INCH * 1.05);
+        leftFrontTarget = leftFront.getCurrentPosition() + (int) (horizontalInches * COUNTS_PER_INCH * 1.05);
+        rightFrontTarget = rightFront.getCurrentPosition() + (int) (-horizontalInches * COUNTS_PER_INCH * 1.05);
+        leftRearTarget = leftRear.getCurrentPosition() + (int) (-horizontalInches * COUNTS_PER_INCH * 1.05);
+        rightRearTarget = rightRear.getCurrentPosition() + (int) (horizontalInches * COUNTS_PER_INCH * 1.05);
 
         leftFront.setTargetPosition(leftFrontTarget);
         rightFront.setTargetPosition(rightFrontTarget);
@@ -555,10 +555,10 @@ public class DriveTrain {
         rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // reset the timeout time and start motion.
-        leftFront.setPower(Range.clip(Math.abs(speed),-1,1));
-        rightFront.setPower(Range.clip(Math.abs(speed),-1,1));
-        leftRear.setPower(Range.clip(Math.abs(speed),-1,1));
-        rightRear.setPower(Range.clip(Math.abs(speed),-1,1));
+        leftFront.setPower(Range.clip(Math.abs(speed), -1, 1));
+        rightFront.setPower(Range.clip(Math.abs(speed), -1, 1));
+        leftRear.setPower(Range.clip(Math.abs(speed), -1, 1));
+        rightRear.setPower(Range.clip(Math.abs(speed), -1, 1));
 
         // keep looping while we are still active, and there is time left, and all 4 motors are running.
         // Note: We use (isBusy() && isBusy()) in the loop test, which means that when any of the motors hits
@@ -567,7 +567,7 @@ public class DriveTrain {
         // However, if you require that ALL motors have finished their moves before the robot continues
         // onto the next step, use (isBusy() || isBusy()) in the loop test.
         while (leftFront.isBusy() && rightFront.isBusy() && leftRear.isBusy() && rightRear.isBusy()) {
-            angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             error = angles.firstAngle - targetAngle;
 
             // fix the angleError so it doesn't go past 180 degrees
@@ -582,19 +582,19 @@ public class DriveTrain {
             }
 
             progress = Math.abs(leftFront.getCurrentPosition() - initialPos);
-            double percentage = (progress * 100.0)/totalTicks;
+            double percentage = (progress * 100.0) / totalTicks;
 
             if (percentage < 5.0 || percentage > 95.0) {
-                leftFront.setPower ((speed + rotVal) * 0.5);
-                leftRear.setPower ((speed + rotVal) * 0.5);
-                rightFront.setPower ((speed - rotVal) * 0.5);
-                rightRear.setPower ((speed - rotVal) * 0.5);
+                leftFront.setPower((speed + rotVal) * 0.5);
+                leftRear.setPower((speed + rotVal) * 0.5);
+                rightFront.setPower((speed - rotVal) * 0.5);
+                rightRear.setPower((speed - rotVal) * 0.5);
 
             } else {
-                leftFront.setPower (speed + rotVal);
-                leftRear.setPower (speed + rotVal);
-                rightFront.setPower (speed - rotVal);
-                rightRear.setPower (speed - rotVal);
+                leftFront.setPower(speed + rotVal);
+                leftRear.setPower(speed + rotVal);
+                rightFront.setPower(speed - rotVal);
+                rightRear.setPower(speed - rotVal);
             }
         }
 
@@ -604,9 +604,9 @@ public class DriveTrain {
         rightFront.setPower(0.0);
         rightRear.setPower(0.0);
 
-        angles= imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         error = angles.firstAngle - targetAngle;
-        rotate (-error, speed);
+        rotate(-error, speed);
 
         // reset mode
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -614,6 +614,27 @@ public class DriveTrain {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
+    public void driverControlled(double translateX, double translateY, double rotate, double sensitivty, boolean turtleMode ){
 
+       double lfPower, lrPower, rfPower, rrPower;
+
+        if (turtleMode) {
+            lfPower = sensitivty*(translateY + translateX + rotate)/2;
+            lrPower = sensitivty*(translateY - translateX + rotate)/2;
+            rfPower = sensitivty*(translateY - translateX - rotate)/2;
+            rrPower = sensitivty*(translateY + translateX - rotate)/2;
+        } else {
+            lfPower = sensitivty*(translateY + translateX + rotate);
+            lrPower = sensitivty*(translateY - translateX + rotate);
+            rfPower = sensitivty*(translateY - translateX - rotate);
+            rrPower = sensitivty*(translateY + translateX - rotate);
+        }
+
+        leftFront.setPower(Range.clip(lfPower, -1.0, +1.0));
+        leftRear.setPower(Range.clip(lrPower, -1.0, +1.0));
+        rightFront.setPower(Range.clip(rfPower, -1.0, +1.0));
+        rightRear.setPower(Range.clip(rrPower, -1.0, +1.0));
+
+    }
 }
 

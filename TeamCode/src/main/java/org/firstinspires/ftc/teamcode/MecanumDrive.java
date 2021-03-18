@@ -57,10 +57,10 @@ public class MecanumDrive extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
     // Declare motors
-    private DcMotor leftFront = null;
+    /*private DcMotor leftFront = null;
     private DcMotor rightFront = null;
     private DcMotor leftRear = null;
-    private DcMotor rightRear = null;
+    private DcMotor rightRear = null;*/
     private DcMotor frontMotor = null;
     private DcMotor backMotor = null;
 
@@ -76,12 +76,15 @@ public class MecanumDrive extends LinearOpMode {
     private boolean dpadUpUp;
     private boolean dpadLeftUp;
     private boolean gp1aUP;
+    private float initialAngle;
+    private boolean gp1xUp;
 
 
     // Declare Wobble Goal Mechanism
     public WobbleGoal wobbleGoal;
     // Declare kicker
     public Kicker kicker;
+    public DriveTrain driveTrain;
     // Declare Joystick variables
     private double translateY, translateX, rotate;
     // Declare motor power variables
@@ -98,20 +101,21 @@ public class MecanumDrive extends LinearOpMode {
         // step (using the FTC Robot Controller app on the phone).
         wobbleGoal = new WobbleGoal(this);
         kicker = new Kicker(this);
+        driveTrain = new DriveTrain(this);
 
-        leftFront  = hardwareMap.get(DcMotor.class, "LFD");
+      /*  leftFront  = hardwareMap.get(DcMotor.class, "LFD");
         rightFront = hardwareMap.get(DcMotor.class, "RFD");
         leftRear  = hardwareMap.get(DcMotor.class, "LRD");
-        rightRear = hardwareMap.get(DcMotor.class, "RRD");
+        rightRear = hardwareMap.get(DcMotor.class, "RRD");*/
         frontMotor = hardwareMap.get(DcMotor.class, "GECKO"); //Front intake motor
         backMotor = hardwareMap.get(DcMotor.class, "COMPLIANT"); //Back intake motor
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        /*leftFront.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
         rightRear.setDirection(DcMotor.Direction.FORWARD);
-
+*/
         //Start Positions for Servos
         wobbleGoal.parkArm();
         wobbleGoal.closeClaw();
@@ -127,6 +131,8 @@ public class MecanumDrive extends LinearOpMode {
         waitForStart();
         kicker.setFlywheelPIDF();
         runtime.reset();
+
+        initialAngle = driveTrain.readAngle();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -162,14 +168,14 @@ public class MecanumDrive extends LinearOpMode {
                 lBumperUpGP1 = true;
             }
 
-            /*DriveTrain dt = new DriveTrain(null);
-            if(!gamepad2.a){
+            if(!gamepad1.a){
                 gp1aUP = true;
             }
-            if(gamepad2.a && gp1aUP){
-                dt.straffe(3,0.5);
-                gp1aUP = false;
-            }*/
+
+            if(!gamepad1.x){
+                gp1xUp = true;
+            }
+
 
 
             // gamepad button X - Park Arm
@@ -228,6 +234,16 @@ public class MecanumDrive extends LinearOpMode {
                 kicker.reportFlywheelVelocity();
             }
 
+            // Turns robot to face initial angle
+            if(gamepad1.a && gp1aUP){
+                driveTrain.fixAngle(initialAngle);
+                gp1aUP = false;
+            }
+            if(gamepad1.x && gp1xUp){
+                driveTrain.straffe(7,0.6);
+                gp1xUp = false;
+            }
+
             //using left and right trigger for intake
             if (gamepad2.left_trigger!=0) {
                 frontMotor.setPower(1);
@@ -265,9 +281,11 @@ public class MecanumDrive extends LinearOpMode {
                  }
              }
 
-             //Calculating power needed in each motor
+             driveTrain.driverControlled(translateX, translateY,rotate,sensitivty,gamepad1.right_bumper);
+
+             //Calculating power needed in each motor,
             //turtleMode - 50% of normal power - if Right bumper is pressed (not toggle) turtleMode is on, if not, normal mode
-            if (gamepad1.right_bumper) {
+            /*if (gamepad1.right_bumper) {
                 lfPower = sensitivty*(translateY + translateX + rotate)/2;
                 lrPower = sensitivty*(translateY - translateX + rotate)/2;
                 rfPower = sensitivty*(translateY - translateX - rotate)/2;
@@ -277,13 +295,13 @@ public class MecanumDrive extends LinearOpMode {
                 lrPower = sensitivty*(translateY - translateX + rotate);
                 rfPower = sensitivty*(translateY - translateX - rotate);
                 rrPower = sensitivty*(translateY + translateX - rotate);
-            }
+            }*/
 
             // Send calculated power to wheels
-            leftFront.setPower(Range.clip(lfPower, -1.0, +1.0));
+         /*   leftFront.setPower(Range.clip(lfPower, -1.0, +1.0));
             leftRear.setPower(Range.clip(lrPower, -1.0, +1.0));
             rightFront.setPower(Range.clip(rfPower, -1.0, +1.0));
-            rightRear.setPower(Range.clip(rrPower, -1.0, +1.0));
+            rightRear.setPower(Range.clip(rrPower, -1.0, +1.0));*/
 
             // Show the elapsed game time and wheel power.
            /* telemetry.addData("Status", "Run Time: " + runtime.toString());
