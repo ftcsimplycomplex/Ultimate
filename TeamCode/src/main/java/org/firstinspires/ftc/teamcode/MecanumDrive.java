@@ -78,6 +78,7 @@ public class MecanumDrive extends LinearOpMode {
     private boolean gp1aUP;
     private float initialAngle;
     private boolean gp1xUp;
+    private boolean gp1bUp;
 
 
     // Declare Wobble Goal Mechanism
@@ -176,6 +177,9 @@ public class MecanumDrive extends LinearOpMode {
                 gp1xUp = true;
             }
 
+            if(!gamepad1.b){
+                gp1bUp = true;
+            }
 
 
             // gamepad button X - Park Arm
@@ -241,7 +245,13 @@ public class MecanumDrive extends LinearOpMode {
             }
             if(gamepad1.x && gp1xUp){
                 driveTrain.straffe(7,0.6);
+                sleep(200);
+                driveTrain.fixAngle(initialAngle);
                 gp1xUp = false;
+            }
+            if(gamepad1.b && gp1bUp){
+                initialAngle = driveTrain.readAngle();
+                gp1bUp = false;
             }
 
             //using left and right trigger for intake

@@ -277,6 +277,7 @@ public class DriveTrain {
 
             rotVal = Math.abs(error * K_PROP_R);
 
+
             if (error < 0) {
                 leftFront.setPower( - (rotVal + speed));
                 leftRear.setPower( - (rotVal + speed));
