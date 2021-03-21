@@ -226,6 +226,12 @@ public class DriveTrain {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
         // created targets
        /* int leftRearTarget;
         int rightRearTarget;
@@ -300,6 +306,11 @@ public class DriveTrain {
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
     //Input a negative horizontalInches to go left, positive to go right
     public void straffe(double horizontalInches, double speed){
@@ -637,5 +648,145 @@ public class DriveTrain {
         rightRear.setPower(Range.clip(rrPower, -1.0, +1.0));
 
     }
+
+    public void controlledRotate(float degrees, double speed){
+
+        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        float error;
+        float targetAngle;
+        float initialAngle = readAngle();
+        float percentage;
+        targetAngle = angles.firstAngle + degrees;
+
+        error = angles.firstAngle-targetAngle;
+
+        if (Math.abs(error) > 180.0) {
+            error = -Math.copySign(360.0f - Math.abs(error), error);
+        }
+
+
+        // set correct modes for motors
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+        // created targets
+       /* int leftRearTarget;
+        int rightRearTarget;
+        int leftFrontTarget;
+        int rightFrontTarget;
+
+        // defined target variables
+        // 53.41 is about the circumference of one rotation of our robot - 17/2 * pi - 17 inch is about the diameter of our robot
+        leftFrontTarget = leftFront.getCurrentPosition() + (int)(62.24 * degrees * 1.45 * COUNTS_PER_INCH/ 360);
+        rightFrontTarget = rightFront.getCurrentPosition() +(int)(-62.24 * degrees *1.45 * COUNTS_PER_INCH/ 360);
+        leftRearTarget = leftRear.getCurrentPosition() + (int)(62.24 * degrees * 1.45* COUNTS_PER_INCH/ 360);
+        rightRearTarget = rightRear.getCurrentPosition() + (int)(-62.24 * degrees * 1.45 * COUNTS_PER_INCH/ 360);
+
+        leftFront.setTargetPosition(leftFrontTarget);
+        rightFront.setTargetPosition(rightFrontTarget);
+        leftRear.setTargetPosition(leftRearTarget);
+        rightRear.setTargetPosition(rightRearTarget);
+
+        // Turn On RUN_TO_POSITION
+        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // reset the timeout time and start motion.
+        leftFront.setPower(Range.clip(Math.abs(speed),-1,1));
+        rightFront.setPower(Range.clip(Math.abs(speed),-1,1));
+        leftRear.setPower(Range.clip(Math.abs(speed),-1,1));
+        rightRear.setPower(Range.clip(Math.abs(speed),-1,1));
+
+        // keep looping while we are still active, and there is time left, and all 4 motors are running.
+        // Note: We use (isBusy() && isBusy()) in the loop test, which means that when any of the motors hits
+        // its target position, the motion will stop.  This is "safer" in the event that the robot will
+        // always end the motion as soon as possible.
+        // However, if you require that ALL motors have finished their moves before the robot continues
+        // onto the next step, use (isBusy() || isBusy()) in the loop test.
+        while (leftFront.isBusy() && rightFront.isBusy() && leftRear.isBusy() && rightRear.isBusy()) {
+        }*/
+
+
+        while (Math.abs(error) > 1){
+
+            angles= imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            error = angles.firstAngle-targetAngle;
+
+            if (Math.abs(error) > 180.0) {
+                error = -Math.copySign(360.0f - Math.abs(error), error);
+            }
+
+            percentage = (1-(error)/(targetAngle-initialAngle))*100;
+
+            if (percentage < 5.0) {
+
+                if (error < 0) {
+                    leftFront.setPower( - (speed + percentage/10));
+                    leftRear.setPower( - (speed + percentage/10));
+                    rightFront.setPower(speed + percentage/10);
+                    rightRear.setPower(speed + percentage/10);
+                } else {
+                    leftFront.setPower(speed + percentage/10);
+                    leftRear.setPower(speed + percentage/10);
+                    rightFront.setPower( - (speed + percentage/10));
+                    rightRear.setPower( - (speed + percentage/10));
+                }
+
+            } else if(percentage > 95){
+
+
+                if (error < 0) {
+                    leftFront.setPower( - (speed + (100 - percentage)/10));
+                    leftRear.setPower( - (speed + (100 - percentage)/10));
+                    rightFront.setPower(speed + (100 - percentage)/10);
+                    rightRear.setPower(speed + (100 - percentage)/10);
+                } else {
+                    leftFront.setPower(speed  + (100 - percentage)/10);
+                    leftRear.setPower(speed + (100 - percentage)/10);
+                    rightFront.setPower( - (speed) + (100 - percentage)/10);
+                    rightRear.setPower( - (speed) + (100 - percentage)/10);
+                }
+            } else {
+                if (error < 0) {
+                    leftFront.setPower( - (speed + 0.5));
+                    leftRear.setPower( - speed  + 0.5);
+                    rightFront.setPower(speed + 0.5);
+                    rightRear.setPower(speed + 0.5);
+                } else {
+                    leftFront.setPower(speed + 0.5);
+                    leftRear.setPower(speed + 0.5);
+                    rightFront.setPower( - (speed + 0.5));
+                    rightRear.setPower( - (speed + 0.5));
+                }
+            }
+        }
+
+        leftFront.setPower(0.0);
+        leftRear.setPower(0.0);
+        rightFront.setPower(0.0);
+        rightRear.setPower(0.0);
+
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    }
 }
+
+
 
