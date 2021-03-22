@@ -230,11 +230,11 @@ public class DriveTrain {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // Sets brake mode to reduce coasting
+       /* // Sets brake mode to reduce coasting
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);*/
 
 
         while (Math.abs(error) > 1){
@@ -277,11 +277,11 @@ public class DriveTrain {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // sets float mode
+/*        // sets float mode
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);*/
     }
     //Input a negative horizontalInches to go left, positive to go right
     public void straffe(double horizontalInches, double speed){
@@ -498,7 +498,7 @@ public class DriveTrain {
         float currentAngle, error ;
         currentAngle = readAngle();
         error = currentAngle - initialAngle;
-        rotate(-error, 0.5);
+        rotate(-error, 0.2);
     }
 
     public void controlledStraffe(double horizontalInches, double speed) {
