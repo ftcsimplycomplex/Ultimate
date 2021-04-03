@@ -60,10 +60,10 @@ public class Diagnostic extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        lFront = hardwareMap.get(DcMotor.class, "lFront"); // Defining Motors
-        rFront = hardwareMap.get(DcMotor.class, "rFront");
-        lBack = hardwareMap.get(DcMotor.class, "lBack");
-        rBack = hardwareMap.get(DcMotor.class, "rBack");
+        lFront = hardwareMap.get(DcMotor.class, "LFD"); // Defining Motors
+        rFront = hardwareMap.get(DcMotor.class, "RFD");
+        lBack = hardwareMap.get(DcMotor.class, "LRD");
+        rBack = hardwareMap.get(DcMotor.class, "RRD");
 
         rFront.setDirection(DcMotor.Direction.REVERSE); // The left motors should spin counterclockwise to move forward and the right motors to move clockwise.
         rBack.setDirection(DcMotor.Direction.REVERSE);
