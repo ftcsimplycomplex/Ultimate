@@ -258,7 +258,7 @@ public class AutonPrototype extends LinearOpMode {
         sleep(150);
         kicker.rest();
         kicker.stopFlywheel(); // After shooting start stack
-        driveTrain.controlledTankDrive(1.0,  -44,  -44);  // S1: Forward to zone C
+        driveTrain.controlledTankDrive(1.0,  -46,  -46);  // S1: Forward to zone C
         driveTrain.straffe(-27.0, 0.76);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
