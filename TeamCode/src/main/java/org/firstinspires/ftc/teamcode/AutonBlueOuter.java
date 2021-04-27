@@ -184,7 +184,7 @@ public class AutonBlueOuter extends LinearOpMode {
     }
     public void WobbleB(){
         kicker.startIntake();
-        driveTrain.controlledStraffe(-18,0.5);
+        driveTrain.controlledStraffe(-16,0.5);
         sleep(500);
         driveTrain.fixAngle(initialAngle);
         driveTrain.tankDrive(0.4,18,18);
@@ -203,8 +203,12 @@ public class AutonBlueOuter extends LinearOpMode {
         kicker.shoot();
         sleep(150);
         kicker.rest();
+        sleep(300);
+        kicker.shoot();
+        sleep(150);
+        kicker.rest();
         kicker.stopFlywheel();
-        driveTrain.controlledTankDrive(DRIVE_SPEED,-21,-21);  // S1: Forward to zone B
+        driveTrain.controlledTankDrive(DRIVE_SPEED,-24,-24);  // S1: Forward to zone B
         driveTrain.straffe(-2, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
@@ -217,7 +221,7 @@ public class AutonBlueOuter extends LinearOpMode {
         driveTrain.tankDrive(DRIVE_SPEED,  9,  9); // S5: Back up to Launch Line
     }
     public void WobbleC(){
-        driveTrain.controlledStraffe(-18,0.5);
+        driveTrain.controlledStraffe(-15,0.5);
         sleep(500);
         driveTrain.fixAngle(initialAngle);
         driveTrain.tankDrive(0.76,16,16); // Knocks over starter stack
@@ -258,13 +262,12 @@ public class AutonBlueOuter extends LinearOpMode {
         sleep(150);
         kicker.rest();
         kicker.stopFlywheel(); // After shooting start stack
-        driveTrain.controlledTankDrive(1.0,  -44,  -44);  // S1: Forward to zone C
-        driveTrain.straffe(-27.0, 0.76);
+        driveTrain.controlledTankDrive(1.0,  -47,  -47);  // S1: Forward to zone C
+        driveTrain.straffe(15.0, 0.76);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
         sleep(760); //pause for servos to move
-        driveTrain.straffe(2.0,0.2); //S4: Strafe to the left 2 inches
         //sleep(1100);     // pause for servos to move
         wobbleGoal.parkArm(); // S5: Raise arm
         //sleep(1200);     // pause for servos to move
