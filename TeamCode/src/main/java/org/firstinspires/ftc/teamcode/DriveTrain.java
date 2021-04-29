@@ -500,20 +500,23 @@ public class DriveTrain {
                  * Dividing by ACCEL_FOOTPRINT changes the range to between 0.0 and 1.0.  Subtracting
                  * that value from 1.0 places the slowly changing part of the curve at the full power
                  * part of the drive, with the rapidly changing part near the end points.  We square
-                 * that, and subtract that parabola from 1.0 to flip it upside-down.
+                 * that, and subtract that parabola from 1.0 to flip it upside-down.  Note the use of
+                 * Math.pow(x,2) to do the square function: seems to be the standard for Java.
                  */
-                inverseParabola = 1.0 - (1.0 - Math.pow((percentage/ACCEL_FOOTPRINT), 2));
-//TODO apply minimum allowable drivespeed rule!!!
-                leftFront.setPower  ((speed + rotVal) * inverseParabola);
-                leftRear.setPower   ((speed + rotVal) * inverseParabola);
-                rightFront.setPower ((speed - rotVal) * inverseParabola);
-                rightRear.setPower  ((speed - rotVal) * inverseParabola);
+                inverseParabola = 1.0 - (Math.pow( (1.0 - (percentage/ACCEL_FOOTPRINT)), 2));
+
+                // "rotVal", which applies a steering correction, is not subject to minimum speed.
+
+                leftFront.setPower  ( Math.max(speed * inverseParabola, MINIMUM_SPEED) + rotVal );
+                leftRear.setPower   ( Math.max(speed * inverseParabola, MINIMUM_SPEED) + rotVal );
+                rightFront.setPower ( Math.max(speed * inverseParabola, MINIMUM_SPEED) - rotVal );
+                rightRear.setPower  ( Math.max(speed * inverseParabola, MINIMUM_SPEED) - rotVal );
 
             } else {        // We're in the "full requested power" part of the drive
-                leftFront.setPower (speed + rotVal);
-                leftRear.setPower (speed + rotVal);
+                leftFront.setPower  (speed + rotVal);
+                leftRear.setPower   (speed + rotVal);
                 rightFront.setPower (speed - rotVal);
-                rightRear.setPower (speed - rotVal);
+                rightRear.setPower  (speed - rotVal);
             }
         }
 
