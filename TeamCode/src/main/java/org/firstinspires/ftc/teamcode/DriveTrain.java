@@ -69,8 +69,8 @@ public class DriveTrain {
      * We also set a minimum speed constant, MINIMUM_SPEED, to prevent us from getting stuck at a selected
      * speed that's too slow to get off of the starting point, or get to the end of our travel.
      */
-    static final double ACCEL_FOOTPRINT     = 5.0;       // Percent of total travel
-    static final double MINIMUM_SPEED       = 0.20;      // 1.0 being full speed
+    static final double ACCEL_FOOTPRINT     = 30.0;      // Percent of total travel
+    static final double MINIMUM_SPEED       = 0.10;      // 1.0 being full speed
 
     // The IMU sensor object
     BNO055IMU imu;
