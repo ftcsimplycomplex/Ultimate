@@ -127,12 +127,12 @@ public class AutonRedOuter extends LinearOpMode {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         initialAngle = driveTrain.readAngle();
         driveTrain.tankDrive(DRIVE_SPEED, -1, -1);
-        driveTrain.controlledStraffe(-12, DRIVE_SPEED); // Initial straffe
+        driveTrain.controlledStraffe(-7, DRIVE_SPEED); // Initial straffe
         sleep(300);
         driveTrain.fixAngle(initialAngle);
         kicker.flywheel();
-        driveTrain.controlledTankDrive(DRIVE_SPEED, -50, -50); // Shooting pos
-        driveTrain.controlledStraffe(29,0.4);
+        driveTrain.controlledTankDrive(DRIVE_SPEED+0.1, -51, -51); // Shooting pos
+        driveTrain.controlledStraffe(24,0.6);
         sleep(300);
         driveTrain.fixAngle(initialAngle);
         sleep(300); // Start shooting preloaded rings
@@ -185,14 +185,14 @@ public class AutonRedOuter extends LinearOpMode {
     }
     public void WobbleB(){
         kicker.startIntake();
-        driveTrain.controlledStraffe(18,0.5);
+        driveTrain.controlledStraffe(-8,0.5);
         sleep(500);
         driveTrain.fixAngle(initialAngle);
         driveTrain.tankDrive(0.4,18,18);
         sleep(1000);
         driveTrain.tankDrive(0.4,-18,-18);
         kicker.flywheel();
-        driveTrain.controlledStraffe(-16,0.5);
+        driveTrain.controlledStraffe(8,0.5);
         kicker.stopIntake();
         sleep(300);
         driveTrain.fixAngle(initialAngle);
@@ -205,20 +205,20 @@ public class AutonRedOuter extends LinearOpMode {
         sleep(150);
         kicker.rest();
         kicker.stopFlywheel();
-        driveTrain.controlledTankDrive(DRIVE_SPEED,-21,-21);  // S1: Forward to zone B
+        driveTrain.controlledTankDrive(DRIVE_SPEED,-28,-28);  // S1: Forward to zone B
         driveTrain.straffe(2, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
         sleep(1200); //pause for servos to move
-        driveTrain.straffe(-2.0,0.2); //S4: Strafe to the left 2 inches
+        driveTrain.straffe(2.0,0.2); //S4: Strafe to the left 2 inches
         sleep(1100);     // pause for servos to move
         wobbleGoal.parkArm(); // S5: Raise arm
         sleep(1200);     // pause for servos to move
-        driveTrain.tankDrive(DRIVE_SPEED,  9,  9); // S5: Back up to Launch Line
+        driveTrain.tankDrive(DRIVE_SPEED,  12,  12); // S5: Back up to Launch Line
     }
     public void WobbleC(){
-        driveTrain.controlledStraffe(18,0.5);
+        driveTrain.controlledStraffe(-8,0.75);
         sleep(500);
         driveTrain.fixAngle(initialAngle);
         driveTrain.tankDrive(0.76,16,16); // Knocks over starter stack
@@ -228,9 +228,9 @@ public class AutonRedOuter extends LinearOpMode {
         kicker.startIntake();
         driveTrain.tankDrive(0.3, 15, 15); // Intakes starter stack
         sleep(500);
-        driveTrain.controlledTankDrive(0.76, -22, -22); // Backs up from starter stack
+        driveTrain.controlledTankDrive(0.8, -22, -22); // Backs up from starter stack
         kicker.flywheel();
-        driveTrain.controlledStraffe(-16,0.5); // Moves to shooting pos
+        driveTrain.controlledStraffe(8,0.75); // Moves to shooting pos
         sleep(300);
         kicker.stopIntake();
         driveTrain.fixAngle(initialAngle);
@@ -259,17 +259,17 @@ public class AutonRedOuter extends LinearOpMode {
         sleep(150);
         kicker.rest();
         kicker.stopFlywheel(); // After shooting start stack
-        driveTrain.controlledTankDrive(1.0,  -44,  -44);  // S1: Forward to zone C
-        driveTrain.straffe(27.0, 0.76);
+        driveTrain.controlledTankDrive(1.0,  -46,  -46);  // S1: Forward to zone C
+        driveTrain.straffe(-20.0, 0.76);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
-        sleep(3000);     // pause for servos to move
+        sleep(2000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
-        sleep(760); //pause for servos to move
-        driveTrain.straffe(-2.0,0.2); //S4: Strafe to the left 2 inches
+        sleep(500); //pause for servos to move
+        driveTrain.straffe(2.0,0.5); //S4: Strafe to the left 2 inches
         //sleep(1100);     // pause for servos to move
         wobbleGoal.parkArm(); // S5: Raise arm
         //sleep(1200);     // pause for servos to move
-        driveTrain.controlledTankDrive(1.0,  35.0,  35.0); // S5: Back up to Launch Line
+        driveTrain.tankDrive(1.0,  30.0,  30.0); // S5: Back up to Launch Line
     }
 }
 
