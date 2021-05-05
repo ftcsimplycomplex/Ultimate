@@ -61,6 +61,17 @@ public class DriveTrain {
     static final float K_PROP_S = 0.035f;
     static final float K_PROP_R = (1.0f/360.0f);
 
+    /*
+     * In controlledTankDrive() and controlledStraffe(), we shall reduce wheel slip by ramping the
+     * requested speed up and down, following an inverted parabolic curve.  We will apply this curve
+     * at either end of the distance, over a fixed percentage of that distance, as specified in ACCEL_FOOTPRINT.
+     *
+     * We also set a minimum speed constant, MINIMUM_SPEED, to prevent us from getting stuck at a selected
+     * speed that's too slow to get off of the starting point, or get to the end of our travel.
+     */
+    static final double ACCEL_FOOTPRINT     = 25.0;      // Percent of total travel
+    static final double MINIMUM_SPEED       = 0.10;      // 1.0 being full speed
+
     // The IMU sensor object
     BNO055IMU imu;
     // State used for updating telemetry
@@ -390,6 +401,9 @@ public class DriveTrain {
     }
 
     public void controlledTankDrive(double speed, double rightInches, double leftInches){
+        double percentage;
+        double inverseParabola;
+
         // set motors to correct mode
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -433,10 +447,15 @@ public class DriveTrain {
         rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // reset the timeout time and start motion.
-        leftFront.setPower(Range.clip(Math.abs(speed * 0.5),-1,1));
+        /*leftFront.setPower(Range.clip(Math.abs(speed * 0.5),-1,1));
         rightFront.setPower(Range.clip(Math.abs(speed * 0.5),-1,1));
         leftRear.setPower(Range.clip(Math.abs(speed * 0.5),-1,1));
-        rightRear.setPower(Range.clip(Math.abs(speed * 0.5),-1,1));
+        rightRear.setPower(Range.clip(Math.abs(speed * 0.5),-1,1));*/
+
+        leftFront.setPower(MINIMUM_SPEED);      // Ignoring the possibility
+        rightFront.setPower(MINIMUM_SPEED);     // that the requested top
+        leftRear.setPower(MINIMUM_SPEED);       // speed is lower than the programmed
+        rightRear.setPower(MINIMUM_SPEED);      // minimum speed.
 
         // keep looping while we are still active, and there is time left, and all 4 motors are running.
         // Note: We use (isBusy() && isBusy()) in the loop test, which means that when any of the motors hits
@@ -463,19 +482,41 @@ public class DriveTrain {
               //      rightRear.getCurrentPosition() + leftRear.getCurrentPosition())/(4 * leftFrontTarget)) * 100;
 
             progress = Math.abs(leftFront.getCurrentPosition() - initialPos);
-            double percentage = (progress * 100.0)/totalTicks;
+            percentage = (progress * 100.0)/totalTicks;
 
-            if (percentage < 5.0 || percentage > 95.0) {
-                leftFront.setPower ((speed + rotVal) * 0.5);
-                leftRear.setPower ((speed + rotVal) * 0.5);
-                rightFront.setPower ((speed - rotVal) * 0.5);
-                rightRear.setPower ((speed - rotVal) * 0.5);
+            if (percentage < ACCEL_FOOTPRINT || percentage > (100.0-ACCEL_FOOTPRINT)) {
+                /*
+                 * Apply the inverse parabolic function at either end of the drive.  First, adjust
+                 * the percentage of travel so it's got the same range either accelerating at the
+                 * start of the drive, or decelerating at the end.  It will equal zero at both the
+                 * start and end of the drive, and equal ACCEL_FOOTPRINT where the parabolic curve
+                 * hits the constant speed part of the drive.
+                 */
+                if(percentage > (100.0-ACCEL_FOOTPRINT)){
+                    percentage = 100.0 - percentage;          // Yes, it's that simple.
+                }
 
-            } else {
-                leftFront.setPower (speed + rotVal);
-                leftRear.setPower (speed + rotVal);
+                /*
+                 * Dividing by ACCEL_FOOTPRINT changes the range to between 0.0 and 1.0.  Subtracting
+                 * that value from 1.0 places the slowly changing part of the curve at the full power
+                 * part of the drive, with the rapidly changing part near the end points.  We square
+                 * that, and subtract that parabola from 1.0 to flip it upside-down.  Note the use of
+                 * Math.pow(x,2) to do the square function: seems to be the standard for Java.
+                 */
+                inverseParabola = 1.0 - (Math.pow( (1.0 - (percentage/ACCEL_FOOTPRINT)), 2));
+
+                // "rotVal", which applies a steering correction, is not subject to minimum speed.
+
+                leftFront.setPower  ( Math.max(speed * inverseParabola, MINIMUM_SPEED) + rotVal );
+                leftRear.setPower   ( Math.max(speed * inverseParabola, MINIMUM_SPEED) + rotVal );
+                rightFront.setPower ( Math.max(speed * inverseParabola, MINIMUM_SPEED) - rotVal );
+                rightRear.setPower  ( Math.max(speed * inverseParabola, MINIMUM_SPEED) - rotVal );
+
+            } else {        // We're in the "full requested power" part of the drive
+                leftFront.setPower  (speed + rotVal);
+                leftRear.setPower   (speed + rotVal);
                 rightFront.setPower (speed - rotVal);
-                rightRear.setPower (speed - rotVal);
+                rightRear.setPower  (speed - rotVal);
             }
         }
 
@@ -509,6 +550,8 @@ public class DriveTrain {
     }
 
     public void controlledStraffe(double horizontalInches, double speed){
+        double percentage;
+        double inverseParabola;
 
         // set correct modes for motors
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -555,10 +598,17 @@ public class DriveTrain {
         rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // reset the timeout time and start motion.
+/*
         leftFront.setPower(Range.clip(Math.abs(speed),-1,1));
         rightFront.setPower(Range.clip(Math.abs(speed),-1,1));
         leftRear.setPower(Range.clip(Math.abs(speed),-1,1));
         rightRear.setPower(Range.clip(Math.abs(speed),-1,1));
+*/
+
+        leftFront.setPower(MINIMUM_SPEED);
+        rightFront.setPower(MINIMUM_SPEED);
+        leftRear.setPower(MINIMUM_SPEED);
+        rightRear.setPower(MINIMUM_SPEED);
 
         // keep looping while we are still active, and there is time left, and all 4 motors are running.
         // Note: We use (isBusy() && isBusy()) in the loop test, which means that when any of the motors hits
@@ -582,19 +632,43 @@ public class DriveTrain {
             }
 
             progress = Math.abs(leftFront.getCurrentPosition() - initialPos);
-            double percentage = (progress * 100.0)/totalTicks;
+            percentage = (progress * 100.0)/totalTicks;
 
-            if (percentage < 5.0 || percentage > 95.0) {
-                leftFront.setPower ((speed + rotVal) * 0.5);
-                leftRear.setPower ((speed + rotVal) * 0.5);
-                rightFront.setPower ((speed - rotVal) * 0.5);
-                rightRear.setPower ((speed - rotVal) * 0.5);
+            if (percentage < ACCEL_FOOTPRINT || percentage > (100.0-ACCEL_FOOTPRINT)) {
+                /*
+                 * Apply the inverse parabolic function at either end of the drive.  First, adjust
+                 * the percentage of travel so it's got the same range either accelerating at the
+                 * start of the drive, or decelerating at the end.  It will equal zero at both the
+                 * start and end of the drive, and equal ACCEL_FOOTPRINT where the parabolic curve
+                 * hits the constant speed part of the drive.
+                 */
+                if(percentage > (100.0-ACCEL_FOOTPRINT)){
+                    percentage = 100.0 - percentage;          // Yes, it's that simple.
+                }
 
-            } else {
-                leftFront.setPower (speed + rotVal);
-                leftRear.setPower (speed + rotVal);
+                /*
+                 * Dividing by ACCEL_FOOTPRINT changes the range to between 0.0 and 1.0.  Subtracting
+                 * that value from 1.0 places the slowly changing part of the curve at the full power
+                 * part of the drive, with the rapidly changing part near the end points.  We square
+                 * that, and subtract that parabola from 1.0 to flip it upside-down.  Note the use of
+                 * Math.pow(x,2) to do the square function: seems to be the standard for Java.
+                 */
+                inverseParabola = 1.0 - (Math.pow( (1.0 - (percentage/ACCEL_FOOTPRINT)), 2));
+
+
+                // "rotVal", which applies a steering correction, is not subject to minimum speed.
+
+                leftFront.setPower  ( Math.max(speed * inverseParabola, MINIMUM_SPEED) + rotVal );
+                leftRear.setPower   ( Math.max(speed * inverseParabola, MINIMUM_SPEED) + rotVal );
+                rightFront.setPower ( Math.max(speed * inverseParabola, MINIMUM_SPEED) - rotVal );
+                rightRear.setPower  ( Math.max(speed * inverseParabola, MINIMUM_SPEED) - rotVal );
+
+            } else {        // We're in the "full requested power" part of the drive
+
+                leftFront.setPower  (speed + rotVal);
+                leftRear.setPower   (speed + rotVal);
                 rightFront.setPower (speed - rotVal);
-                rightRear.setPower (speed - rotVal);
+                rightRear.setPower  (speed - rotVal);
             }
         }
 
