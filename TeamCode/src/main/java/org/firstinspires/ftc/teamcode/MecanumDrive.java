@@ -107,6 +107,11 @@ public class MecanumDrive extends LinearOpMode {
         frontMotor = hardwareMap.get(DcMotor.class, "GECKO"); //Front intake motor
         backMotor = hardwareMap.get(DcMotor.class, "COMPLIANT"); //Back intake motor
 
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         //Start Positions for Servos
         wobbleGoal.parkArm();
         wobbleGoal.closeClaw();
