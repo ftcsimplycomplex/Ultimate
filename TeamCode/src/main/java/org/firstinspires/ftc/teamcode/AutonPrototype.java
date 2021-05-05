@@ -63,9 +63,9 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="AutonBlueOuter", group="Linear Opmode")
+@Autonomous(name="AutonPrototype", group="Linear Opmode")
 /*@Disabled*/
-public class AutonBlueOuter extends LinearOpMode {
+public class AutonPrototype extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwarePushbot         robot   = new HardwarePushbot();   // Use a Pushbot's hardware
@@ -127,7 +127,7 @@ public class AutonBlueOuter extends LinearOpMode {
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         initialAngle = driveTrain.readAngle();
         driveTrain.tankDrive(DRIVE_SPEED, -1, -1);
-        driveTrain.controlledStraffe(9, DRIVE_SPEED); // Initial straffe
+        driveTrain.controlledStraffe(12, DRIVE_SPEED); // Initial straffe
         sleep(300);
         driveTrain.fixAngle(initialAngle);
         kicker.flywheel();
@@ -170,7 +170,7 @@ public class AutonBlueOuter extends LinearOpMode {
     }
     public void WobbleA(){
         driveTrain.tankDrive(DRIVE_SPEED,  -5,  -5);  // S1: Forward to zone A
-        driveTrain.controlledStraffe(12.0, 0.5);
+        driveTrain.straffe(-30.0, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
@@ -179,22 +179,30 @@ public class AutonBlueOuter extends LinearOpMode {
         sleep(1100);     // pause for servos to move
         wobbleGoal.parkArm(); // S5: Raise arm
         sleep(1200);     // pause for servos to move
-        driveTrain.straffe(-28.0, 0.5);
+        driveTrain.straffe(28.0, 0.5);
         driveTrain.tankDrive(DRIVE_SPEED,  -14.0,  -14.0); // S5: Back up to Launch Line
     }
     public void WobbleB(){
         kicker.startIntake();
-        driveTrain.controlledStraffe(-16,0.5);
+        driveTrain.controlledStraffe(-14,0.5);
         sleep(500);
         driveTrain.fixAngle(initialAngle);
         driveTrain.tankDrive(0.4,18,18);
         sleep(1000);
         driveTrain.tankDrive(0.4,-18,-18);
         kicker.flywheel();
-        driveTrain.controlledStraffe(16,0.5);
-        kicker.stopIntake();
+        driveTrain.controlledStraffe(12,0.5);
         sleep(300);
         driveTrain.fixAngle(initialAngle);
+        sleep(300);
+        kicker.shoot();
+        sleep(150);
+        kicker.rest();
+        kicker.stopIntake();
+        sleep(300);
+        kicker.shoot();
+        sleep(150);
+        kicker.rest();
         sleep(300);
         kicker.shoot();
         sleep(150);
@@ -208,7 +216,7 @@ public class AutonBlueOuter extends LinearOpMode {
         sleep(150);
         kicker.rest();
         kicker.stopFlywheel();
-        driveTrain.controlledTankDrive(DRIVE_SPEED,-24,-24);  // S1: Forward to zone B
+        driveTrain.controlledTankDrive(DRIVE_SPEED,-23,-23);  // S1: Forward to zone B
         driveTrain.straffe(-2, 0.5);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
@@ -218,10 +226,10 @@ public class AutonBlueOuter extends LinearOpMode {
         sleep(1100);     // pause for servos to move
         wobbleGoal.parkArm(); // S5: Raise arm
         sleep(1200);     // pause for servos to move
-        driveTrain.tankDrive(DRIVE_SPEED,  9,  9); // S5: Back up to Launch Line
+        driveTrain.tankDrive(DRIVE_SPEED+0.1,  9,  9); // S5: Back up to Launch Line
     }
     public void WobbleC(){
-        driveTrain.controlledStraffe(-15,0.5);
+        driveTrain.controlledStraffe(-14,0.5);
         sleep(500);
         driveTrain.fixAngle(initialAngle);
         driveTrain.tankDrive(0.76,16,16); // Knocks over starter stack
@@ -233,7 +241,7 @@ public class AutonBlueOuter extends LinearOpMode {
         sleep(500);
         driveTrain.controlledTankDrive(0.76, -22, -22); // Backs up from starter stack
         kicker.flywheel();
-        driveTrain.controlledStraffe(16,0.5); // Moves to shooting pos
+        driveTrain.controlledStraffe(12,0.5); // Moves to shooting pos
         sleep(300);
         kicker.stopIntake();
         driveTrain.fixAngle(initialAngle);
@@ -262,12 +270,13 @@ public class AutonBlueOuter extends LinearOpMode {
         sleep(150);
         kicker.rest();
         kicker.stopFlywheel(); // After shooting start stack
-        driveTrain.controlledTankDrive(1.0,  -47,  -47);  // S1: Forward to zone C
-        driveTrain.straffe(15.0, 0.76);
+        driveTrain.controlledTankDrive(1.0,  -46,  -46);  // S1: Forward to zone C
+        driveTrain.straffe(-27.0, 0.76);
         wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
         sleep(760); //pause for servos to move
+        driveTrain.straffe(2.0,0.2); //S4: Strafe to the left 2 inches
         //sleep(1100);     // pause for servos to move
         wobbleGoal.parkArm(); // S5: Raise arm
         //sleep(1200);     // pause for servos to move
