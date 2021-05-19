@@ -5,13 +5,20 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.openftc.easyopencv.OpenCvWebcam;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.opencv.core.Core.inRange;
 
 public class OpenCV {
     private static String ringPosition;
@@ -60,13 +67,29 @@ public class OpenCV {
         //TODO Should we free up memory, too?
     }
 
-
     public class UltimatePipeline extends OpenCvPipeline {
+
+        private int visionState;
+
+        public void initVision(){
+            visionState = 1;
+        }
+
+        void runVision(){
+            visionState = 3;
+        }
 
         private Mat topRectangle = new Mat();
         private Mat bottomRectangle = new Mat();
 
-        private Mat convertedInput = new Mat(); // Working copy; keeps submats out of input buffer
+        private Mat BlurInput       = new Mat(); // Working copy; keeps submats out of input buffer
+        private Mat convertedInput  = new Mat(); // Working copy; keeps submats out of input buffer
+        private Mat HSVInput        = new Mat(); // Working copy; keeps submats out of input buffer
+        private Mat mask            = new Mat();
+        private Mat canny           = new Mat();
+        private Mat hierarchy       = new Mat();
+
+        private List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 
         private Mat topSample = new Mat();      // For submat crops
         private Mat bottomSample = new Mat();   // For submat crops
@@ -88,7 +111,10 @@ public class OpenCV {
         @Override
         public void init(Mat firstFrame)
         {
-            Imgproc.cvtColor(firstFrame, convertedInput, Imgproc.COLOR_RGB2YCrCb);    // Convert color space to working copy
+            Imgproc.GaussianBlur(firstFrame, BlurInput, new Size(9,9), 0);
+            Imgproc.cvtColor(BlurInput, convertedInput, Imgproc.COLOR_RGB2YCrCb);    // Convert color space to working copy
+            Imgproc.cvtColor(BlurInput, HSVInput, Imgproc.COLOR_RGB2HSV);    // Convert color space to working copy
+
 
             topSample = convertedInput.submat(topRect);         // Submat pointers are persistent
             bottomSample = convertedInput.submat(bottomRect);   // Submat pointers are persistent
@@ -98,9 +124,37 @@ public class OpenCV {
         public Mat processFrame(Mat input) {
             if (input.empty()) return input;
 
-            Imgproc.cvtColor(input, convertedInput, Imgproc.COLOR_RGB2YCrCb);    // Convert color space to working copy
+            switch (visionState){
+                case 1:
+                    Imgproc.GaussianBlur(input, BlurInput, new Size(9,9), 0); //Blurs image to reduce noise
 
-            topSample = convertedInput.submat(topRect);         // Shouldn't be necessary according to the docs
+                    Imgproc.cvtColor(BlurInput, convertedInput, Imgproc.COLOR_RGB2YCrCb);    // Convert color space to working copy
+                    Imgproc.cvtColor(BlurInput, HSVInput, Imgproc.COLOR_RGB2HSV);    // Convert color space to working copy
+
+                    Scalar lower = new Scalar(0, 140, 0); //Lower color range
+                    Scalar upper = new Scalar(255, 255, 255); //Higher color range
+
+                    inRange(convertedInput, lower, upper, mask); //Creates mask using upper and lower
+
+                    Imgproc.Canny(mask, canny, 50, 50); //Creates canny
+
+                    Imgproc.findContours(canny, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE); //Creates list of contours
+
+                    for(MatOfPoint contour: contours){
+
+                    }
+                    break;
+                case 2:
+
+                    break;
+                case 3:
+
+                    break;
+                case 4:
+
+                    break;
+            }
+            /*topSample = convertedInput.submat(topRect);         // Shouldn't be necessary according to the docs
             bottomSample = convertedInput.submat(bottomRect);   // Shouldn't be necessary according to the docs
 
             Imgproc.rectangle(input, topRect, new Scalar(0, 255, 0), 2);        // Draw rectangles on input buffer
@@ -118,7 +172,7 @@ public class OpenCV {
                 ringPosition = "B";                                                             // is orange = 1 ring
             } else {                    // default is no rings
                 ringPosition = "A";
-            }
+            }*/
 
             return input;
         }
