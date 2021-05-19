@@ -69,9 +69,9 @@ public class DriveTrain {
      * We also set a minimum speed constant, MINIMUM_SPEED, to prevent us from getting stuck at a selected
      * speed that's too slow to get off of the starting point, or get to the end of our travel.
      */
-    static final double ACCEL_FOOTPRINT     = 25.0;      // Percent of total travel
-    static final double MINIMUM_SPEED       = 0.10;      // 1.0 being full speed
-
+    static final double ACCEL_FOOTPRINT     = 25.0;     // Percent of total travel
+    static final double MINIMUM_SPEED       = 0.10;     // 1.0 being full speed
+    static final double ROTATE_RAMP         = 15.0;     //Ramping down at this many degrees
     // The IMU sensor object
     BNO055IMU imu;
     // State used for updating telemetry
@@ -237,46 +237,6 @@ public class DriveTrain {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        // created targets
-       /* int leftRearTarget;
-        int rightRearTarget;
-        int leftFrontTarget;
-        int rightFrontTarget;
-
-        // defined target variables
-        // 53.41 is about the circumference of one rotation of our robot - 17/2 * pi - 17 inch is about the diameter of our robot
-        leftFrontTarget = leftFront.getCurrentPosition() + (int)(62.24 * degrees * 1.45 * COUNTS_PER_INCH/ 360);
-        rightFrontTarget = rightFront.getCurrentPosition() +(int)(-62.24 * degrees *1.45 * COUNTS_PER_INCH/ 360);
-        leftRearTarget = leftRear.getCurrentPosition() + (int)(62.24 * degrees * 1.45* COUNTS_PER_INCH/ 360);
-        rightRearTarget = rightRear.getCurrentPosition() + (int)(-62.24 * degrees * 1.45 * COUNTS_PER_INCH/ 360);
-
-        leftFront.setTargetPosition(leftFrontTarget);
-        rightFront.setTargetPosition(rightFrontTarget);
-        leftRear.setTargetPosition(leftRearTarget);
-        rightRear.setTargetPosition(rightRearTarget);
-
-        // Turn On RUN_TO_POSITION
-        leftFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        // reset the timeout time and start motion.
-        leftFront.setPower(Range.clip(Math.abs(speed),-1,1));
-        rightFront.setPower(Range.clip(Math.abs(speed),-1,1));
-        leftRear.setPower(Range.clip(Math.abs(speed),-1,1));
-        rightRear.setPower(Range.clip(Math.abs(speed),-1,1));
-
-        // keep looping while we are still active, and there is time left, and all 4 motors are running.
-        // Note: We use (isBusy() && isBusy()) in the loop test, which means that when any of the motors hits
-        // its target position, the motion will stop.  This is "safer" in the event that the robot will
-        // always end the motion as soon as possible.
-        // However, if you require that ALL motors have finished their moves before the robot continues
-        // onto the next step, use (isBusy() || isBusy()) in the loop test.
-        while (leftFront.isBusy() && rightFront.isBusy() && leftRear.isBusy() && rightRear.isBusy()) {
-        }*/
-
-
         while (Math.abs(error) > 1){
 
             angles= imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -286,18 +246,22 @@ public class DriveTrain {
                 error = -Math.copySign(360.0f - Math.abs(error), error);
             }
 
-            rotVal = Math.abs(error * K_PROP_R);
+            if(Math.abs(error)<ROTATE_RAMP){
+                rotVal = Math.abs(error/ROTATE_RAMP);
+            } else{
+                rotVal = 1.0;
+            }
 
             if (error < 0) {
-                leftFront.setPower( - (rotVal + speed));
-                leftRear.setPower( - (rotVal + speed));
-                rightFront.setPower( + rotVal + speed);
-                rightRear.setPower( + rotVal + speed);
+                leftFront.setPower( - (Math.max(rotVal * speed, MINIMUM_SPEED)));
+                leftRear.setPower( - (Math.max(rotVal * speed,  MINIMUM_SPEED)));
+                rightFront.setPower(+ (Math.max(rotVal * speed, MINIMUM_SPEED)));
+                rightRear.setPower( + (Math.max(rotVal * speed, MINIMUM_SPEED)));
             } else {
-                leftFront.setPower( + rotVal + speed);
-                leftRear.setPower( + rotVal + speed);
-                rightFront.setPower( - (rotVal + speed));
-                rightRear.setPower( - (rotVal + speed));
+                leftFront.setPower( + (Math.max(rotVal * speed, MINIMUM_SPEED)));
+                leftRear.setPower( + (Math.max(rotVal * speed,  MINIMUM_SPEED)));
+                rightFront.setPower( - (Math.max(rotVal * speed,MINIMUM_SPEED)));
+                rightRear.setPower( - (Math.max(rotVal * speed, MINIMUM_SPEED)));
             }
         }
 
@@ -527,9 +491,9 @@ public class DriveTrain {
         rightFront.setPower(0.0);
         rightRear.setPower(0.0);
 
-        angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        /*angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         error = angles.firstAngle - targetAngle;
-        rotate (Math.round(-error), speed);
+        rotate (Math.round(-error), speed);*/
 
         // resets the mode
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -678,9 +642,9 @@ public class DriveTrain {
         rightFront.setPower(0.0);
         rightRear.setPower(0.0);
 
-        angles= imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+/*        angles= imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         error = angles.firstAngle - targetAngle;
-        rotate (-error, speed);
+        rotate (-error, speed);*/
 
         // reset mode
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

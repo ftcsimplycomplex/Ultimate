@@ -180,7 +180,7 @@ public class AutonBlueInner extends LinearOpMode {
         sleep(1200);     // pause for servos to move
         driveTrain.straffe(-28.0, 0.5);
         driveTrain.tankDrive(DRIVE_SPEED,  -14.0,  -14.0); // S5: Back up to Launch Line
-        driveTrain.rotate(170, 0.5);
+        driveTrain.rotate(180, 0.5);
     }
     public void WobbleB(){
         kicker.startIntake();
@@ -215,7 +215,7 @@ public class AutonBlueInner extends LinearOpMode {
         wobbleGoal.parkArm(); // S5: Raise arm
         sleep(1200);     // pause for servos to move
         driveTrain.tankDrive(DRIVE_SPEED,  9,  9); // S5: Back up to Launch Line
-        driveTrain.rotate(170, 0.5);
+        driveTrain.rotate(180, 0.5);
     }
     public void WobbleC(){
         driveTrain.controlledStraffe(-10.68,0.5);
