@@ -164,7 +164,7 @@ public class AutonRedOuter extends LinearOpMode {
         }
 
 
-        driveTrain.rotate(170, 0.5);
+        driveTrain.rotate(180, 0.5);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
