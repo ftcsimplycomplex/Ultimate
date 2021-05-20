@@ -73,13 +73,13 @@ public class OpenCV {
 
         private Rect bottomRect = new Rect(     // Dimensions and locations for sampling
                 400,
-                300,
+                315,                        // Changed from 300 to 315 on 20-MAY-21 (JL)
                 50,
                 10
         );
         private Rect topRect = new Rect(        // Dimensions and locations for sampling
                 400,
-                240,
+                250,                        // Changed from 240 to 250 on 20-MAY-21 (JL)
                 50,
                 10
         );
