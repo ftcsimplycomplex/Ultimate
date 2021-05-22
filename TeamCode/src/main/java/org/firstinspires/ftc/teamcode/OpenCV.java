@@ -6,6 +6,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -35,6 +37,16 @@ public class OpenCV {
     private final double ORANGE_THRESHOLD = 110;
 
     private OpenCvWebcam camera;
+
+    private int visionState;
+
+    public void initVision(){
+        visionState = 1;
+    }
+
+    public void runVision(){
+        visionState = 3;
+    }
 
     /*
     * "Getter" method to return target zone A, B, or C as a string
@@ -68,17 +80,6 @@ public class OpenCV {
     }
 
     public class UltimatePipeline extends OpenCvPipeline {
-
-        private int visionState;
-
-        public void initVision(){
-            visionState = 1;
-        }
-
-        void runVision(){
-            visionState = 3;
-        }
-
         private Mat topRectangle = new Mat();
         private Mat bottomRectangle = new Mat();
 
@@ -87,12 +88,22 @@ public class OpenCV {
         private Mat HSVInput        = new Mat(); // Working copy; keeps submats out of input buffer
         private Mat mask            = new Mat();
         private Mat canny           = new Mat();
+        private Mat dilated           = new Mat();
         private Mat hierarchy       = new Mat();
 
         private List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 
         private Mat topSample = new Mat();      // For submat crops
         private Mat bottomSample = new Mat();   // For submat crops
+
+        double area;
+        double peri;
+        MatOfPoint2f approx;
+        MatOfPoint2f newContour;
+        int x,y,w,h;
+        Rect startStack;
+
+        boolean initStackFound = false;
 
         private Rect bottomRect = new Rect(     // Dimensions and locations for sampling
                 400,
@@ -132,16 +143,33 @@ public class OpenCV {
                     Imgproc.cvtColor(BlurInput, HSVInput, Imgproc.COLOR_RGB2HSV);    // Convert color space to working copy
 
                     Scalar lower = new Scalar(0, 140, 0); //Lower color range
-                    Scalar upper = new Scalar(255, 255, 255); //Higher color range
+                    Scalar upper = new Scalar(255, 255, 115); //Higher color range
 
                     inRange(convertedInput, lower, upper, mask); //Creates mask using upper and lower
 
                     Imgproc.Canny(mask, canny, 50, 50); //Creates canny
 
+                    Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(2 * 2 + 1, 2 * 2 + 1),
+                            new Point(2, 2));
+                    Imgproc.dilate(canny, dilated, element);
+
                     Imgproc.findContours(canny, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE); //Creates list of contours
 
                     for(MatOfPoint contour: contours){
+                        area = Imgproc.contourArea(contour);
+                        if(area > 5000){
+                            newContour = new MatOfPoint2f(contour);
+                            peri = Imgproc.arcLength(newContour, true);
+                            Imgproc.approxPolyDP(newContour, approx, peri, true);
 
+                            startStack = Imgproc.boundingRect(approx);
+
+                            if(startStack.width > startStack.height && startStack.y > 240){
+                                initStackFound = true;
+                                visionState = 2;
+                                break;
+                            }
+                        }
                     }
                     break;
                 case 2:
