@@ -68,6 +68,8 @@ public class OpenCV {
         camera.openCameraDevice();
         camera.setPipeline(new UltimatePipeline());
         camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+
+        visionState = 1;    // State machine variable for the pipeline
     }
 
     /**
@@ -133,10 +135,23 @@ public class OpenCV {
 
         @Override
         public Mat processFrame(Mat input) {
+            /*
+             * processFrame() is called per-image-frame, from the webcam.  What happens to the frame is governed
+             * by a state machine, to match the stage of the game (i.e. "init" - look for the full four-ring start
+             * stack.  "play" - randomization has occurred; the game has started.  Look at the start stack location
+             * and act appropriately based on how, or if, it has changed since initialization.
+             *
+             */
             if (input.empty()) return input;
 
             switch (visionState){
                 case 1:
+                    /*
+                     * State 1: entered upon "init" from Driver's Station.  (visionState variable set in Constructor.)
+                     * Analyze the whole frame, set a mask based on Cr, Cb range, do edge detection, contours, and select
+                     * the start stack based on location (below horizon line) and proportions of rectangular area.
+                     *
+                     */
                     Imgproc.GaussianBlur(input, BlurInput, new Size(9,9), 0); //Blurs image to reduce noise
 
                     Imgproc.cvtColor(BlurInput, convertedInput, Imgproc.COLOR_RGB2YCrCb);    // Convert color space to working copy
@@ -173,12 +188,29 @@ public class OpenCV {
                     }
                     break;
                 case 2:
-
+                    /*
+                     * State 2: Waiting for Start ("play" button on the Driver's Station.) Just return the camera
+                     * image, with the horizon line drawn, and the start stack rectangle to confirm that it's been
+                     * found.  This will show up during camera preview.  Transition to State 3 will be triggered
+                     * by a call to runVision().  Note that there is no need to set a next state in this code block.
+                     */
                     break;
                 case 3:
-
+                    /*
+                     * State 3: Entered after OpMode calls runVision(), immediately after Drive Team Coach presses "play".
+                     * Analyze the average Hue inside the pre-established start stack rectangle, and compare it to the
+                     * initial value.  Very close to initial value means it's still four rings.  Thresholds for one or zero
+                     * rings to be determined empirically.
+                     *
+                     */
+                    visionState = 4;
                     break;
                 case 4:
+                    /*
+                     * State 4: Do nothing, just return the frame.  "Our work here is done."  OpMode should call stopDetect()
+                     * to shut down the pipeline and free up resources.
+                     *
+                     */
 
                     break;
             }
