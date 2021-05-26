@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -29,12 +30,18 @@ public class OpenCV {
     private double topAverage;
     private double bottomAverage;
 
+    double initStackAvg; //Was 15.6 last time tested
+    double finalStackAvg;
+
     /*
      * Telemetry from on-field tests show that a rectangle sample on an orange ring produces a topAverage / bottomAverage
      * of about 90, where no ring (no orange color) yields something around 125.  So, let's use 110 as the threshold,
      * above 100 is no ring, below 100 is ring.
      */
     private final double ORANGE_THRESHOLD = 110;
+    private final int FRAME_WIDTH = 640;
+    private final int FRAME_HEIGHT = 480;
+    private final int HORIZON_HEIGHT = 200;
 
     private OpenCvWebcam camera;
 
@@ -59,15 +66,19 @@ public class OpenCV {
     public double getTopAverage() {return topAverage;}  // "Getter" method for telemetry
     public double getBottomAverage() {return bottomAverage;}  // "Getter" method for telemetry
 
+    public double getInitStackAvg(){return initStackAvg;}
+    public double getFinalStackAvg(){return finalStackAvg;}
+
  /*
  * Constructor: Gets and opens the webcam, sets the processing pipeline, and starts camera streaming.
  */
     public OpenCV(HardwareMap hardwareMap) {
+
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"),
                 hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()));
         camera.openCameraDevice();
         camera.setPipeline(new UltimatePipeline());
-        camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+        camera.startStreaming(FRAME_WIDTH, FRAME_HEIGHT, OpenCvCameraRotation.UPRIGHT);
 
         visionState = 1;    // State machine variable for the pipeline
     }
@@ -82,24 +93,27 @@ public class OpenCV {
     }
 
     public class UltimatePipeline extends OpenCvPipeline {
-        private Mat topRectangle = new Mat();
+        private Mat topRectangle    = new Mat();
         private Mat bottomRectangle = new Mat();
 
-        private Mat BlurInput       = new Mat(); // Working copy; keeps submats out of input buffer
+        private Mat blurInput       = new Mat(); // Working copy; keeps submats out of input buffer
         private Mat convertedInput  = new Mat(); // Working copy; keeps submats out of input buffer
         private Mat HSVInput        = new Mat(); // Working copy; keeps submats out of input buffer
         private Mat mask            = new Mat();
         private Mat canny           = new Mat();
-        private Mat dilated           = new Mat();
+        private Mat dilated         = new Mat();
         private Mat hierarchy       = new Mat();
 
         private List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 
         private Mat topSample = new Mat();      // For submat crops
         private Mat bottomSample = new Mat();   // For submat crops
+        private Mat hueSample = new Mat();
+        private Mat hueChannel = new Mat();
 
         double area;
         double peri;
+
         MatOfPoint2f approx;
         MatOfPoint2f newContour;
         int x,y,w,h;
@@ -120,17 +134,25 @@ public class OpenCV {
                 10
         );
 
+        private double avgHue(){
+            hueSample = HSVInput.submat(startStack);
+
+            Core.extractChannel(hueSample, hueChannel, 0);
+
+            return Core.mean(hueChannel).val[0];
+        }
+
 
         @Override
         public void init(Mat firstFrame)
         {
-            Imgproc.GaussianBlur(firstFrame, BlurInput, new Size(9,9), 0);
-            Imgproc.cvtColor(BlurInput, convertedInput, Imgproc.COLOR_RGB2YCrCb);    // Convert color space to working copy
-            Imgproc.cvtColor(BlurInput, HSVInput, Imgproc.COLOR_RGB2HSV);    // Convert color space to working copy
+            Imgproc.GaussianBlur(firstFrame, blurInput, new Size(9,9), 0);
+            Imgproc.cvtColor(blurInput, convertedInput, Imgproc.COLOR_RGB2YCrCb);    // Convert color space to working copy
+            Imgproc.cvtColor(blurInput, HSVInput, Imgproc.COLOR_RGB2HSV);    // Convert color space to working copy
 
 
-            topSample = convertedInput.submat(topRect);         // Submat pointers are persistent
-            bottomSample = convertedInput.submat(bottomRect);   // Submat pointers are persistent
+//            topSample = convertedInput.submat(topRect);         // Submat pointers are persistent
+//            bottomSample = convertedInput.submat(bottomRect);   // Submat pointers are persistent
         }
 
         @Override
@@ -152,13 +174,15 @@ public class OpenCV {
                      * the start stack based on location (below horizon line) and proportions of rectangular area.
                      *
                      */
-                    Imgproc.GaussianBlur(input, BlurInput, new Size(9,9), 0); //Blurs image to reduce noise
+                    Imgproc.GaussianBlur(input, blurInput, new Size(9,9), 0); //Blurs image to reduce noise
 
-                    Imgproc.cvtColor(BlurInput, convertedInput, Imgproc.COLOR_RGB2YCrCb);    // Convert color space to working copy
-                    Imgproc.cvtColor(BlurInput, HSVInput, Imgproc.COLOR_RGB2HSV);    // Convert color space to working copy
+                    Imgproc.cvtColor(blurInput, convertedInput, Imgproc.COLOR_RGB2YCrCb);    // Convert color space to working copy
+                    Imgproc.cvtColor(blurInput, HSVInput, Imgproc.COLOR_RGB2HSV);    // Convert color space to working copy
 
-                    Scalar lower = new Scalar(0, 140, 0); //Lower color range
-                    Scalar upper = new Scalar(255, 255, 115); //Higher color range
+                    Scalar lower = new Scalar(0,   140,  0); //Lower color range
+                    Scalar upper = new Scalar(255, 255,  115); //Higher color range
+
+
 
                     inRange(convertedInput, lower, upper, mask); //Creates mask using upper and lower
 
@@ -170,22 +194,25 @@ public class OpenCV {
 
                     Imgproc.findContours(canny, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_NONE); //Creates list of contours
 
+
                     for(MatOfPoint contour: contours){
-                        area = Imgproc.contourArea(contour);
-                        if(area > 5000){
-                            newContour = new MatOfPoint2f(contour);
-                            peri = Imgproc.arcLength(newContour, true);
-                            Imgproc.approxPolyDP(newContour, approx, peri, true);
+//                        area = Imgproc.contourArea(contour);
+//                        if(area > 5000){
+                        /*newContour = new MatOfPoint2f(contour);
+                        peri = Imgproc.arcLength(newContour, true);
+                        Imgproc.approxPolyDP(newContour, approx, peri, true);*/
 
-                            startStack = Imgproc.boundingRect(approx);
+                        startStack = Imgproc.boundingRect(contour);
 
-                            if(startStack.width > startStack.height && startStack.y > 240){
-                                initStackFound = true;
-                                visionState = 2;
-                                break;
-                            }
+                        if(startStack.width > startStack.height && startStack.y > HORIZON_HEIGHT && startStack.area() > 5000){
+                            initStackFound = true;
+                            visionState = 2;
+                            initStackAvg = avgHue();
+                            break;
                         }
+//                        }
                     }
+                    visionState = 2;
                     break;
                 case 2:
                     /*
@@ -194,6 +221,10 @@ public class OpenCV {
                      * found.  This will show up during camera preview.  Transition to State 3 will be triggered
                      * by a call to runVision().  Note that there is no need to set a next state in this code block.
                      */
+                    Imgproc.line(input, new Point(0,HORIZON_HEIGHT), new Point(input.width()-1, HORIZON_HEIGHT),new Scalar(0,0,255), 4);
+                    if(initStackFound){
+                        Imgproc.rectangle(input, startStack, new Scalar(0,255,255),4);
+                    }
                     break;
                 case 3:
                     /*
@@ -203,6 +234,7 @@ public class OpenCV {
                      * rings to be determined empirically.
                      *
                      */
+                    finalStackAvg = avgHue();
                     visionState = 4;
                     break;
                 case 4:

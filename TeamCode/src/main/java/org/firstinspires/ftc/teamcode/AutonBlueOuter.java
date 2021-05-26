@@ -106,13 +106,14 @@ public class AutonBlueOuter extends LinearOpMode {
         ringPosition = "B";         // Default if we have to comment out vision
 
         detector = new OpenCV(hardwareMap);
+        detector.initVision();
         telemetry.addData("Status", "WAITING");
         telemetry.update();
 //        detector.init(detector);
         while(!opModeIsActive()){
             ringPosition = detector.getPosition();
-            telemetry.addData("topAverage: ",detector.getTopAverage());
-            telemetry.addData("bottomAverage: ",detector.getBottomAverage());
+            telemetry.addData("Init Stack Average: ",detector.getInitStackAvg());
+            telemetry.addData("Final Stack Average: ",detector.getFinalStackAvg());
             telemetry.addData("Target Zone is ", ringPosition);
             telemetry.update();
             sleep(250);     // Report four times per second
@@ -120,6 +121,8 @@ public class AutonBlueOuter extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+
+        detector.runVision();
 
         detector.stopDetect();      // Shut down webcam processing
 
