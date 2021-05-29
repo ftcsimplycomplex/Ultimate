@@ -32,6 +32,8 @@ public class OpenCV {
 
     double initStackAvg; //Was 15.6 last time tested
     double finalStackAvg;
+    double initBottomQuarterAvg;
+    double finalBottomQuarterAvg;
 
     /*
      * Telemetry from on-field tests show that a rectangle sample on an orange ring produces a topAverage / bottomAverage
@@ -60,6 +62,15 @@ public class OpenCV {
     */
     public String getPosition()
     {
+        if(initStackAvg*1.5 > finalStackAvg){
+            ringPosition = "C";
+        }else{
+            if(initBottomQuarterAvg*1.5 > finalBottomQuarterAvg){
+                ringPosition = "B";
+            }else{
+                ringPosition = "A";
+            }
+        }
         return ringPosition;
     }
 
@@ -68,6 +79,9 @@ public class OpenCV {
 
     public double getInitStackAvg(){return initStackAvg;}
     public double getFinalStackAvg(){return finalStackAvg;}
+
+    public double getInitStackAvgBottomQuarter(){return initBottomQuarterAvg;}
+    public double getFinalStackAvgBottomQuarter(){return finalBottomQuarterAvg;}
 
  /*
  * Constructor: Gets and opens the webcam, sets the processing pipeline, and starts camera streaming.
@@ -111,6 +125,9 @@ public class OpenCV {
         private Mat hueSample = new Mat();
         private Mat hueChannel = new Mat();
 
+        private Mat hueSampleBottomQuarter = new Mat();
+        private Mat hueChannelBottomQuarter = new Mat();
+
         double area;
         double peri;
 
@@ -118,6 +135,7 @@ public class OpenCV {
         MatOfPoint2f newContour;
         int x,y,w,h;
         Rect startStack;
+        Rect bottomQuarter;
 
         boolean initStackFound = false;
 
@@ -140,6 +158,14 @@ public class OpenCV {
             Core.extractChannel(hueSample, hueChannel, 0);
 
             return Core.mean(hueChannel).val[0];
+        }
+
+        private double avgHueBottomQuarter(){
+            hueSampleBottomQuarter = HSVInput.submat(bottomQuarter);
+
+            Core.extractChannel(hueSampleBottomQuarter, hueChannelBottomQuarter, 0);
+
+            return Core.mean(hueChannelBottomQuarter).val[0];
         }
 
 
@@ -208,11 +234,20 @@ public class OpenCV {
                             initStackFound = true;
                             visionState = 2;
                             initStackAvg = avgHue();
+
+                            bottomQuarter = startStack.clone();
+/*
+                            bottomQuarter.x = startStack.x;
+                            bottomQuarter.width = startStack.width;*/
+                            bottomQuarter.height = startStack.height/4;
+                            bottomQuarter.y = startStack.y + (startStack.height*3)/4;
+
+
+                            initBottomQuarterAvg = avgHueBottomQuarter();
                             break;
                         }
 //                        }
                     }
-                    visionState = 2;
                     break;
                 case 2:
                     /*
@@ -221,9 +256,17 @@ public class OpenCV {
                      * found.  This will show up during camera preview.  Transition to State 3 will be triggered
                      * by a call to runVision().  Note that there is no need to set a next state in this code block.
                      */
+                    Imgproc.GaussianBlur(input, blurInput, new Size(9,9), 0); //Blurs image to reduce noise
+
+                    Imgproc.cvtColor(blurInput, convertedInput, Imgproc.COLOR_RGB2YCrCb);    // Convert color space to working copy
+                    Imgproc.cvtColor(blurInput, HSVInput, Imgproc.COLOR_RGB2HSV);    // Convert color space to working copy
+
                     Imgproc.line(input, new Point(0,HORIZON_HEIGHT), new Point(input.width()-1, HORIZON_HEIGHT),new Scalar(0,0,255), 4);
+
                     if(initStackFound){
                         Imgproc.rectangle(input, startStack, new Scalar(0,255,255),4);
+                        finalStackAvg = avgHue();
+                        finalBottomQuarterAvg = avgHueBottomQuarter();
                     }
                     break;
                 case 3:
