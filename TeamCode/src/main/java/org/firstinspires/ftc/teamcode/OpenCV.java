@@ -35,12 +35,7 @@ public class OpenCV {
     double initBottomQuarterAvg;
     double finalBottomQuarterAvg;
 
-    /*
-     * Telemetry from on-field tests show that a rectangle sample on an orange ring produces a topAverage / bottomAverage
-     * of about 90, where no ring (no orange color) yields something around 125.  So, let's use 110 as the threshold,
-     * above 100 is no ring, below 100 is ring.
-     */
-    private final double ORANGE_THRESHOLD = 110;
+
     private final int FRAME_WIDTH = 640;
     private final int FRAME_HEIGHT = 480;
     private final int HORIZON_HEIGHT = 200;
@@ -50,7 +45,7 @@ public class OpenCV {
     private int visionState;
 
     public void initVision(){
-        visionState = 1;
+        visionState = 1;       // Initialize the pipeline state machine.  Redundant: we do it in the constructor.
     }
 
     public void runVision(){
@@ -58,8 +53,16 @@ public class OpenCV {
     }
 
     /*
-    * "Getter" method to return target zone A, B, or C as a string
-    */
+     * "Getter" method to return target zone A, B, or C as a string.
+     *
+     * Hue, from HSV, for a gray field is substantially larger numerically than hue from an orange field.
+     *
+     * If the Start Stack hue (from HSV) post-randomization is below, or not more than 1.5 times greater
+     * than the pre-randomization hue, we consider the start stack unchanged (four rings, Target Zone C).
+     *
+     * Otherwise, we look only at the bottommost 1/4 of the rectangle, and make the same range comparison.
+     * This way, we don't have the area above a remaining ring overwhelming the hue averaging process.
+     */
     public String getPosition()
     {
         if(initStackAvg*1.5 > finalStackAvg){
@@ -107,8 +110,6 @@ public class OpenCV {
     }
 
     public class UltimatePipeline extends OpenCvPipeline {
-        private Mat topRectangle    = new Mat();
-        private Mat bottomRectangle = new Mat();
 
         private Mat blurInput       = new Mat(); // Working copy; keeps submats out of input buffer
         private Mat convertedInput  = new Mat(); // Working copy; keeps submats out of input buffer
@@ -120,37 +121,17 @@ public class OpenCV {
 
         private List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 
-        private Mat topSample = new Mat();      // For submat crops
-        private Mat bottomSample = new Mat();   // For submat crops
         private Mat hueSample = new Mat();
         private Mat hueChannel = new Mat();
 
         private Mat hueSampleBottomQuarter = new Mat();
         private Mat hueChannelBottomQuarter = new Mat();
 
-        double area;
-        double peri;
-
-        MatOfPoint2f approx;
-        MatOfPoint2f newContour;
-        int x,y,w,h;
         Rect startStack;
         Rect bottomQuarter;
 
         boolean initStackFound = false;
 
-        private Rect bottomRect = new Rect(     // Dimensions and locations for sampling
-                400,
-                300,
-                50,
-                10
-        );
-        private Rect topRect = new Rect(        // Dimensions and locations for sampling
-                400,
-                240,
-                50,
-                10
-        );
 
         private double avgHue(){
             hueSample = HSVInput.submat(startStack);
@@ -175,19 +156,14 @@ public class OpenCV {
             Imgproc.GaussianBlur(firstFrame, blurInput, new Size(9,9), 0);
             Imgproc.cvtColor(blurInput, convertedInput, Imgproc.COLOR_RGB2YCrCb);    // Convert color space to working copy
             Imgproc.cvtColor(blurInput, HSVInput, Imgproc.COLOR_RGB2HSV);    // Convert color space to working copy
-
-
-//            topSample = convertedInput.submat(topRect);         // Submat pointers are persistent
-//            bottomSample = convertedInput.submat(bottomRect);   // Submat pointers are persistent
         }
 
         @Override
         public Mat processFrame(Mat input) {
             /*
              * processFrame() is called per-image-frame, from the webcam.  What happens to the frame is governed
-             * by a state machine, to match the stage of the game (i.e. "init" - look for the full four-ring start
-             * stack.  "play" - randomization has occurred; the game has started.  Look at the start stack location
-             * and act appropriately based on how, or if, it has changed since initialization.
+             * by a state machine. State 1 is set by the Constructor, or by a call to initVision().  State 2 is
+             * set by the code executed in State 1, once the Start Stack rectangle location is established.
              *
              */
             if (input.empty()) return input;
@@ -198,6 +174,8 @@ public class OpenCV {
                      * State 1: entered upon "init" from Driver's Station.  (visionState variable set in Constructor.)
                      * Analyze the whole frame, set a mask based on Cr, Cb range, do edge detection, contours, and select
                      * the start stack based on location (below horizon line) and proportions of rectangular area.
+                     *
+                     * TL;DR: find the Start Stack rectangle by color, location, and geometry.
                      *
                      */
                     Imgproc.GaussianBlur(input, blurInput, new Size(9,9), 0); //Blurs image to reduce noise
@@ -222,11 +200,6 @@ public class OpenCV {
 
 
                     for(MatOfPoint contour: contours){
-//                        area = Imgproc.contourArea(contour);
-//                        if(area > 5000){
-                        /*newContour = new MatOfPoint2f(contour);
-                        peri = Imgproc.arcLength(newContour, true);
-                        Imgproc.approxPolyDP(newContour, approx, peri, true);*/
 
                         startStack = Imgproc.boundingRect(contour);
 
@@ -236,25 +209,24 @@ public class OpenCV {
                             initStackAvg = avgHue();
 
                             bottomQuarter = startStack.clone();
-/*
-                            bottomQuarter.x = startStack.x;
-                            bottomQuarter.width = startStack.width;*/
                             bottomQuarter.height = startStack.height/4;
                             bottomQuarter.y = startStack.y + (startStack.height*3)/4;
-
 
                             initBottomQuarterAvg = avgHueBottomQuarter();
                             break;
                         }
-//                        }
                     }
                     break;
                 case 2:
                     /*
-                     * State 2: Waiting for Start ("play" button on the Driver's Station.) Just return the camera
-                     * image, with the horizon line drawn, and the start stack rectangle to confirm that it's been
-                     * found.  This will show up during camera preview.  Transition to State 3 will be triggered
-                     * by a call to runVision().  Note that there is no need to set a next state in this code block.
+                     * State 2: The Start Stack location is known.  Loop around testing for changes.
+                     * Draw the horizon line for the camera preview unconditionally; draw the Start
+                     * Stack rectangle if one has been found (that should always be the case if this
+                     * code is running).  Test for changes: until randomization it will always see
+                     * no changes (target zone C).  This will change if and when rings are removed for
+                     * target zones A or B.
+                     *
+                     * Pipeline stays in state 2 until OpMode stops it with a call to stopVision().
                      */
                     Imgproc.GaussianBlur(input, blurInput, new Size(9,9), 0); //Blurs image to reduce noise
 
@@ -269,45 +241,7 @@ public class OpenCV {
                         finalBottomQuarterAvg = avgHueBottomQuarter();
                     }
                     break;
-                case 3:
-                    /*
-                     * State 3: Entered after OpMode calls runVision(), immediately after Drive Team Coach presses "play".
-                     * Analyze the average Hue inside the pre-established start stack rectangle, and compare it to the
-                     * initial value.  Very close to initial value means it's still four rings.  Thresholds for one or zero
-                     * rings to be determined empirically.
-                     *
-                     */
-                    finalStackAvg = avgHue();
-                    visionState = 4;
-                    break;
-                case 4:
-                    /*
-                     * State 4: Do nothing, just return the frame.  "Our work here is done."  OpMode should call stopDetect()
-                     * to shut down the pipeline and free up resources.
-                     *
-                     */
-
-                    break;
             }
-            /*topSample = convertedInput.submat(topRect);         // Shouldn't be necessary according to the docs
-            bottomSample = convertedInput.submat(bottomRect);   // Shouldn't be necessary according to the docs
-
-            Imgproc.rectangle(input, topRect, new Scalar(0, 255, 0), 2);        // Draw rectangles on input buffer
-            Imgproc.rectangle(input, bottomRect, new Scalar(0, 255, 0), 2);     // for drive team feedback
-
-            Core.extractChannel(bottomSample, bottomRectangle, 2);
-            Core.extractChannel(topSample, topRectangle, 2);
-
-            bottomAverage = Core.mean(bottomRectangle).val[0];
-            topAverage = Core.mean(topRectangle).val[0];
-
-            if (topAverage < ORANGE_THRESHOLD && bottomAverage < ORANGE_THRESHOLD) {            // Both rectangles detect orange = 4 rings
-                ringPosition = "C";
-            } else if (topAverage > ORANGE_THRESHOLD && bottomAverage < ORANGE_THRESHOLD) {     // Top rectangle is not orange, bottom
-                ringPosition = "B";                                                             // is orange = 1 ring
-            } else {                    // default is no rings
-                ringPosition = "A";
-            }*/
 
             return input;
         }
