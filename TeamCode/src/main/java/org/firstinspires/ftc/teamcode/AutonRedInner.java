@@ -106,6 +106,7 @@ public class AutonRedInner extends LinearOpMode {
         ringPosition = "B";         // Default if we have to comment out vision
 
         detector = new OpenCV(hardwareMap);
+        detector.initVision();
         telemetry.addData("Status", "WAITING");
         telemetry.update();
 //        detector.init(detector);
@@ -120,7 +121,7 @@ public class AutonRedInner extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
+        detector.runVision();
         detector.stopDetect();      // Shut down webcam processing
 
         // Step through each leg of the path,

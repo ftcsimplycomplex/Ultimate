@@ -76,7 +76,7 @@ public class AutonBlueOuter extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.75;
+    static final double     DRIVE_SPEED             = 1.0;
     static final double     TURN_SPEED              = 0.5;
 
 
@@ -106,13 +106,16 @@ public class AutonBlueOuter extends LinearOpMode {
         ringPosition = "B";         // Default if we have to comment out vision
 
         detector = new OpenCV(hardwareMap);
+        detector.initVision();
         telemetry.addData("Status", "WAITING");
         telemetry.update();
 //        detector.init(detector);
         while(!opModeIsActive()){
             ringPosition = detector.getPosition();
-            telemetry.addData("topAverage: ",detector.getTopAverage());
-            telemetry.addData("bottomAverage: ",detector.getBottomAverage());
+            telemetry.addData("Init Stack Average: ",detector.getInitStackAvg());
+            telemetry.addData("Final Stack Average: ",detector.getFinalStackAvg());
+            telemetry.addData("Init Stack Bottom Quarter Average: ",detector.getInitStackAvgBottomQuarter());
+            telemetry.addData("Final Stack Bottom Quarter Average: ",detector.getFinalStackAvgBottomQuarter());
             telemetry.addData("Target Zone is ", ringPosition);
             telemetry.update();
             sleep(250);     // Report four times per second
@@ -120,6 +123,8 @@ public class AutonBlueOuter extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+
+        ringPosition = detector.getPosition();
 
         detector.stopDetect();      // Shut down webcam processing
 
