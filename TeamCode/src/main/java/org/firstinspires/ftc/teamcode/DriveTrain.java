@@ -216,6 +216,12 @@ public class DriveTrain {
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
     }
+    /**
+     * rotate() - turns the robot
+     * @param degrees positive is counter-clockwise
+     * @param speed maximum wheel speed
+     *
+     */
     public void rotate(float degrees, double speed){
 
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
