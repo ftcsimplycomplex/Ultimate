@@ -63,7 +63,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="AutonRedOuter", group="Linear Opmode")
+@Autonomous(name="AutonRedOuter", group="Red")
 /*@Disabled*/
 public class AutonRedOuter extends LinearOpMode {
 
@@ -106,13 +106,16 @@ public class AutonRedOuter extends LinearOpMode {
         ringPosition = "B";         // Default if we have to comment out vision
 
         detector = new OpenCV(hardwareMap);
+        detector.initVision();
         telemetry.addData("Status", "WAITING");
         telemetry.update();
 //        detector.init(detector);
         while(!opModeIsActive()){
             ringPosition = detector.getPosition();
-            telemetry.addData("topAverage: ",detector.getTopAverage());
-            telemetry.addData("bottomAverage: ",detector.getBottomAverage());
+            telemetry.addData("Init Stack Average: ",detector.getInitStackAvg());
+            telemetry.addData("Final Stack Average: ",detector.getFinalStackAvg());
+            telemetry.addData("Init Stack Bottom Quarter Average: ",detector.getInitStackAvgBottomQuarter());
+            telemetry.addData("Final Stack Bottom Quarter Average: ",detector.getFinalStackAvgBottomQuarter());
             telemetry.addData("Target Zone is ", ringPosition);
             telemetry.update();
             sleep(250);     // Report four times per second

@@ -78,6 +78,10 @@ public class Kicker {
         flywheel.setPower(flywheelSpeed);
     }
 
+    public void setFlywheelSpeed(double newSpeed){
+        flywheelSpeed = newSpeed;
+    }
+
     //Turns off flywheel
     public void stopFlywheel() {
         flywheel.setPower(0.0);
