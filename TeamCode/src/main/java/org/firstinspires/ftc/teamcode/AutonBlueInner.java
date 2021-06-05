@@ -76,7 +76,7 @@ public class AutonBlueInner extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.75;
+    static final double     DRIVE_SPEED             = 0.85;
     static final double     TURN_SPEED              = 0.5;
 
 
@@ -133,9 +133,9 @@ public class AutonBlueInner extends LinearOpMode {
         sleep(300);
         driveTrain.fixAngle(initialAngle);
         kicker.flywheel();
-        driveTrain.controlledTankDrive(DRIVE_SPEED, -50, -50); // Shooting pos
+        driveTrain.controlledTankDrive(DRIVE_SPEED, -53, -53); // Shooting pos
         driveTrain.controlledStraffe(27, 0.5);
-        sleep(300);
+        sleep(400);
         driveTrain.fixAngle(initialAngle);
         sleep(300); // Start shooting preloaded rings
         kicker.shoot();
@@ -191,17 +191,17 @@ public class AutonBlueInner extends LinearOpMode {
         driveTrain.fixAngle(initialAngle);
         driveTrain.tankDrive(0.4,18,18);
         sleep(1000);
-        driveTrain.tankDrive(0.4,-18,-18);
+        driveTrain.tankDrive(0.4,-19,-19);
         kicker.flywheel();
         driveTrain.controlledStraffe(13.67,0.5);
         kicker.stopIntake();
-        sleep(300);
+        sleep(400);
         driveTrain.fixAngle(initialAngle);
         sleep(300);
         kicker.shoot();
         sleep(150);
         kicker.rest();
-        sleep(300);
+        sleep(400);
         kicker.shoot();
         sleep(150);
         kicker.rest();
@@ -223,54 +223,53 @@ public class AutonBlueInner extends LinearOpMode {
         driveTrain.controlledStraffe(-10.68,0.5);
         sleep(500);
         driveTrain.fixAngle(initialAngle);
-        driveTrain.tankDrive(0.76,16,16); // Knocks over starter stack
+        driveTrain.tankDrive(0.76,14,14); // Knocks over starter stack
         sleep(500);
         driveTrain.fixAngle(initialAngle);
-        driveTrain.tankDrive(0.76,-9,-9); // Backs up from starter stack
+        driveTrain.controlledTankDrive(0.76,-9,-9); // Backs up from starter stack
         kicker.startIntake();
-        driveTrain.tankDrive(0.3, 15, 15); // Intakes starter stack
+        driveTrain.controlledTankDrive(0.3, 13, 13); // Intakes starter stack
         sleep(500);
-        driveTrain.controlledTankDrive(0.76, -22, -22); // Backs up from starter stack
+        driveTrain.controlledTankDrive(0.76, -18, -18); // Backs up from starter stack
         kicker.flywheel();
         driveTrain.controlledStraffe(13.43,0.5); // Moves to shooting pos
-        sleep(300);
+        sleep(500);
         kicker.stopIntake();
         driveTrain.fixAngle(initialAngle);
         sleep(300); // Starter Stack shooting
         kicker.shoot();
         sleep(150);
         kicker.rest();
-        sleep(200);
+        sleep(300);
         kicker.shoot();
         sleep(150);
         kicker.rest();
-        sleep(200);
+        sleep(300);
         kicker.shoot();
         sleep(150);
         kicker.rest();
-        sleep(200);
+        sleep(300);
         kicker.shoot();
         sleep(150);
         kicker.rest();
-        sleep(200);
+        sleep(300);
         kicker.shoot();
         sleep(150);
         kicker.rest();
-        sleep(200);
+        sleep(300);
         kicker.shoot();
         sleep(150);
         kicker.rest();
         kicker.stopFlywheel(); // After shooting start stack
+        wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
         driveTrain.controlledTankDrive(0.70,  -46,  -46);  // S1: Forward to zone C
         driveTrain.straffe(15.99, 0.76);
-        wobbleGoal.grabGoal(); // S2: Lower Wobble Goal
-        sleep(3000);     // pause for servos to move
         wobbleGoal.openClaw(); // S3: Let go of Wobble Goal
         sleep(760); //pause for servos to move
         //sleep(1100);     // pause for servos to move
         wobbleGoal.parkArm(); // S5: Raise arm
         //sleep(1200);     // pause for servos to move
-        driveTrain.controlledTankDrive(0.70,  33.0,  33.0); // S5: Back up to Launch Line
+        driveTrain.controlledTankDrive(0.70,  30.0,  30.0); // S5: Back up to Launch Line
     }
 }
 
