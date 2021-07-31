@@ -93,7 +93,7 @@ public class DriveTrain {
             BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
             parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
             parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-            parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+            parameters.calibrationDataFile = "RobotIMUCalibration.json"; // see the calibration sample opmode
             parameters.loggingEnabled      = true;
             parameters.loggingTag          = "IMU";
             parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
@@ -218,15 +218,17 @@ public class DriveTrain {
     }
     /**
      * rotate() - turns the robot
-     * @param degrees positive is counter-clockwise
+     * @param degrees positive is counter-clockwise, relative to the current orientation
      * @param speed maximum wheel speed
      *
      */
     public void rotate(float degrees, double speed){
 
+        double error;
+        double targetAngle;
+        double rotVal;
+
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        float error;
-        float targetAngle;
         targetAngle = angles.firstAngle + degrees;
 
         error = angles.firstAngle-targetAngle;
@@ -235,7 +237,6 @@ public class DriveTrain {
             error = -Math.copySign(360.0f - Math.abs(error), error);
         }
 
-        double rotVal = 0;
 
         // set correct modes for motors
         leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -243,7 +244,7 @@ public class DriveTrain {
         leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        while (Math.abs(error) > 1){
+        while (Math.abs(error) > 1.0){  //Stop adjusting within 1 degree
 
             angles= imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             error = angles.firstAngle-targetAngle;
@@ -258,15 +259,15 @@ public class DriveTrain {
                 rotVal = 1.0;
             }
 
-            if (error < 0) {
+            if (error < 0.0) {
                 leftFront.setPower( - (Math.max(rotVal * speed, MINIMUM_SPEED)));
-                leftRear.setPower( - (Math.max(rotVal * speed,  MINIMUM_SPEED)));
+                leftRear.setPower( -  (Math.max(rotVal * speed, MINIMUM_SPEED)));
                 rightFront.setPower(+ (Math.max(rotVal * speed, MINIMUM_SPEED)));
                 rightRear.setPower( + (Math.max(rotVal * speed, MINIMUM_SPEED)));
             } else {
                 leftFront.setPower( + (Math.max(rotVal * speed, MINIMUM_SPEED)));
-                leftRear.setPower( + (Math.max(rotVal * speed,  MINIMUM_SPEED)));
-                rightFront.setPower( - (Math.max(rotVal * speed,MINIMUM_SPEED)));
+                leftRear.setPower( +  (Math.max(rotVal * speed, MINIMUM_SPEED)));
+                rightFront.setPower( -(Math.max(rotVal * speed, MINIMUM_SPEED)));
                 rightRear.setPower( - (Math.max(rotVal * speed, MINIMUM_SPEED)));
             }
         }
