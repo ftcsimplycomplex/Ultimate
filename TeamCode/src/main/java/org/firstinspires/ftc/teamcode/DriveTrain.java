@@ -71,7 +71,7 @@ public class DriveTrain {
      */
     static final double ACCEL_FOOTPRINT     = 25.0;     // Percent of total travel
     static final double MINIMUM_SPEED       = 0.10;     // 1.0 being full speed
-    static final double ROTATE_RAMP         = 15.0;     //Ramping down at this many degrees
+    static final double ROTATE_RAMP         = 45.0;     //Ramping down at this many degrees
     // The IMU sensor object
     BNO055IMU imu;
     // State used for updating telemetry
